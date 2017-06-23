@@ -15,13 +15,13 @@ data = np.around(data/255, decimals=5)
 data = data.reshape(data.shape[0],data.shape[1],-1)
 print(data.shape, file=f)
 
-hidden_num = 3000
+hidden_num = 2000
 maxtime = 20
 batch_size = 50
 frame_size = 64
 desired = frame_size*frame_size
 
-learning_rate_start = 0.1
+learning_rate_start = 0.001
 graph = tf.Graph()
 with graph.as_default():
     enc_inputs = tf.placeholder(tf.float32, shape = [maxtime, batch_size, desired], name='enc_inputs')
@@ -46,7 +46,7 @@ with graph.as_default():
     dec_state = enc_state
 
     with tf.variable_scope('dec_scope',reuse=None):
-        dec_cell = tf.contrib.rnn.LSTMCell(hidden_num)
+        dec_cell = tf.contrib.rnn.LSTMCell(hidden_num, use_peepholes=True)
         v = None
         for _ in range(maxtime):
             with tf.variable_scope('unrolling', reuse=v):
@@ -76,12 +76,22 @@ with graph.as_default():
             zip(gradients, v), global_step=global_step)
     '''
     # RMSProp
+    '''
     global_step = tf.Variable(0, trainable = False)
     optimizer = tf.train.RMSPropOptimizer(learning_rate_start)
     gradients, v = zip(*optimizer.compute_gradients(loss))
     gradients, _ = tf.clip_by_global_norm(gradients, 10)
     optimizer = optimizer.apply_gradients(
             zip(gradients, v), global_step=global_step)
+    '''
+    #Adam
+    global_step = tf.Variable(0, trainable = False)
+    optimizer = tf.train.AdamOptimizer(learning_rate_start)
+    gradients, v = zip(*optimizer.compute_gradients(loss))
+    gradients, _ = tf.clip_by_global_norm(gradients, 5)
+    optimizer = optimizer.apply_gradients(
+            zip(gradients, v), global_step=global_step)
+
 
     #saver = tf.train.Saver()
     #create summary for loss
@@ -92,7 +102,7 @@ with graph.as_default():
     #tf.summary.tensor_summary('gradients', gradients)
     #tf.summary.tensor_summary('projection_weights', w)
 train_size = 9000
-epoch = 300
+epoch = 500
 steps = int(train_size/batch_size)
 
 #restore = False
