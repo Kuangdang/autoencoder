@@ -65,6 +65,7 @@ with graph.as_default():
         print('reversed shape %r' % (reversed_outputs.shape,), file=f)
         loss = tf.reduce_mean(tf.squared_difference(reversed_outputs,enc_inputs))
     # Optimizer.
+    '''
     global_step = tf.Variable(0, trainable = False)
     learning_rate = tf.train.exponential_decay(
             learning_rate_start, global_step, 3000, 0.9, staircase=True)
@@ -73,6 +74,15 @@ with graph.as_default():
     gradients, _ = tf.clip_by_global_norm(gradients, 1.25)
     optimizer = optimizer.apply_gradients(
             zip(gradients, v), global_step=global_step)
+    '''
+    # RMSProp
+    global_step = tf.Variable(0, trainable = False)
+    optimizer = tf.train.RMSPropOptimizer(learning_rate_start)
+    gradients, v = zip(*optimizer.compute_gradients(loss))
+    gradients, _ = tf.clip_by_global_norm(gradients, 10)
+    optimizer = optimizer.apply_gradients(
+            zip(gradients, v), global_step=global_step)
+
     #saver = tf.train.Saver()
     #create summary for loss
     loss_sum = tf.summary.scalar('loss', loss)
