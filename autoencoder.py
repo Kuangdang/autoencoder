@@ -5,7 +5,7 @@ import tensorflow as tf
 import sys
 
 
-f = open("/home/stud/wangc/lab/record/log", "a")
+f = open("/home/stud/wangc/lab/record/log", "w+")
 
 data = np.load('/home/stud/wangc/lab/mnist_test_seq.npy')
 print(data.shape, file=f)
@@ -102,7 +102,7 @@ with graph.as_default():
     #tf.summary.tensor_summary('gradients', gradients)
     #tf.summary.tensor_summary('projection_weights', w)
 train_size = 9000
-epoch = 500
+epoch = 200
 steps = int(train_size/batch_size)
 
 #restore = False
@@ -121,7 +121,7 @@ with tf.Session(graph=graph) as session:
             train_writer.add_summary(train_sum, j)
             val_output, val_sum = session.run([outputs, loss_sum], feed_dict={enc_inputs:(data[:,9000:9000+batch_size])})
             validate_writer.add_summary(val_sum, j)
-            if j%10 == 0:
+            if j%20 == 0:
                 val_outputs.append(val_output)  
         val_outputs = np.array(val_outputs)
         #saver.save(session,"/home/stud/wangc/lab/record/model.ckpt")
