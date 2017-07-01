@@ -3,8 +3,6 @@ import numpy as np
 #import matplotlib.image as mpimg
 import tensorflow as tf
 import sys
-from tf.contrib.rnn import LSTMCell
-
 
 #autoencoder class
 class Autoencoder:
@@ -18,8 +16,8 @@ class Autoencoder:
         
         self.hidden_num = hidden_num
         if cell is None:
-            self.enc_cell = LSTMCell(self.hidden_num, use_peepholes=True)
-            self.dec_cell = LSTMCell(self.hidden_num, use_peepholes=True)
+            self.enc_cell = tf.contrib.rnn.LSTMCell(self.hidden_num, use_peepholes=True)
+            self.dec_cell = tf.contrib.rnn.LSTMCell(self.hidden_num, use_peepholes=True)
         else:
             self.enc_cell = cell
             self.dec_cell = cell
