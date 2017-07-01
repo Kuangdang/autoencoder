@@ -69,7 +69,7 @@ class Autoencoder:
         
         loss_sum = tf.summary.scalar('loss', loss)
 
-if __name__ ==' _main__':
+if __name__ =='__main__':
     f = open("/home/stud/wangc/lab/record/log", "w+")  
     data = np.load('/home/stud/wangc/lab/mnist_test_seq.npy')
     data = np.around(data/255, decimals=5)
