@@ -3,24 +3,25 @@ import numpy as np
 #import matplotlib.image as mpimg
 import tensorflow as tf
 import sys
+from lstmcell import LSTMCell
 
 #autoencoder class
 class Autoencoder:
-    def __init__(inputs, hidden_num, cell=None, optimizer=None):
+    def __init__(self, inputs, hidden_num, enc_cell=None, dec_cell=None, optimizer=None):
         '''
         inputs shape [maxtime, batch_size, frame_size*frame_size]
         '''
-        maxtime = inputs.shape[0]
-        batch_size = inputs.shape[1]
-        desired = inputs.shape[2]
+        maxtime = inputs.get_shape().as_list()[0]
+        batch_size = inputs.get_shape().as_list()[1]
+        desired = inputs.get_shape().as_list()[2]
         
         self.hidden_num = hidden_num
-        if cell is None:
+        if enc_cell is None:
             self.enc_cell = tf.contrib.rnn.LSTMCell(self.hidden_num, use_peepholes=True)
             self.dec_cell = tf.contrib.rnn.LSTMCell(self.hidden_num, use_peepholes=True)
         else:
-            self.enc_cell = cell
-            self.dec_cell = cell
+            self.enc_cell = enc_cell
+            self.dec_cell = dec_cell
 
         with tf.variable_scope('encode', reuse=None):
             _, enc_state = tf.nn.dynamic_rnn(self.enc_cell, inputs, dtype=tf.float32, time_major=True)
@@ -42,7 +43,7 @@ class Autoencoder:
             v = None
             for _ in range(maxtime):
                 with tf.variable_scope('unrolling', reuse=v):
-                    output, dec_state = dec_cell(dec_inputs, dec_state)
+                    output, dec_state = self.dec_cell(dec_inputs, dec_state)
                     v = True
                     outputs.append(output)
 
@@ -62,12 +63,12 @@ class Autoencoder:
         else:
             self.optimizer = optimizer 
         global_step = tf.Variable(0, trainable = False)
-        gradients, v = zip(*self.optimizer.compute_gradients(loss))
+        gradients, v = zip(*self.optimizer.compute_gradients(self.loss))
         gradients, _ = tf.clip_by_global_norm(gradients, 5)
         self.train = self.optimizer.apply_gradients(
                     zip(gradients, v), global_step=global_step)
         
-        loss_sum = tf.summary.scalar('loss', loss)
+        self.loss_sum = tf.summary.scalar('loss', self.loss)
 
 if __name__ =='__main__':
     f = open("/home/stud/wangc/lab/record/log", "w+")  
@@ -82,11 +83,15 @@ if __name__ =='__main__':
     epoch = 200
     steps = int(train_size/batch_size)
 
-    inputs = tf.placeholder(tf.float32, shape = [maxtime, batch_size, desired], name='inputs')
-    ae = Autoencoder(inputs, hidden_num) 
-    print("hidden_num %d, batch_size %d, epoch %d" % (hidden_num, batch_size, epoch), file=f)
+    enc_cell = LSTMCell(2000)
+    dec_cell = LSTMCell(2000)
 
+    inputs = tf.placeholder(tf.float32, shape = [maxtime, batch_size, desired], name='inputs')
+    ae = Autoencoder(inputs, hidden_num, enc_cell=enc_cell, dec_cell=dec_cell) 
+    print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s" % (hidden_num, batch_size, epoch, ae.optimizer, ae.enc_cell), file=f)
+    f.flush()
     with tf.Session() as sess:
+        print('beginning-------------------------------')
         tf.global_variables_initializer().run()
         print('initialized')
         train_writer = tf.summary.FileWriter(
@@ -98,7 +103,7 @@ if __name__ =='__main__':
             for i in range(steps):
                 _, train_sum = sess.run([ae.train, ae.loss_sum], feed_dict={inputs:(data[:,i*batch_size:(i+1)*batch_size])})
             train_writer.add_summary(train_sum, j)
-            val_output, val_sum = sess.run([ae.outputs, ae.loss_sum], feed_dict=={inputs:(data[:,9000:9000+batch_size])})
+            val_output, val_sum = sess.run([ae.outputs, ae.loss_sum], feed_dict={inputs:(data[:,train_size:train_size+batch_size])})
             validate_writer.add_summary(val_sum, j)
             if j%20 == 0:
                 val_outputs.append(val_output)
@@ -112,6 +117,6 @@ if __name__ =='__main__':
         np.savez_compressed("/home/stud/wangc/lab/record/outputs",
                 val_out=val_outputs, val_in=data[:,9000:9000+batch_size], test_out=test_outputs, test_in=data[:,9500:9500+batch_size])
     
-
+    print('end---------------------------------')
     f.close()
     sys.exit(0)
