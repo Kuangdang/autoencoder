@@ -77,14 +77,14 @@ if __name__ =='__main__':
     maxtime = data.shape[0]
     in_h = data.shape[2]
     in_w = data.shape[3]
-    hidden_num = 1000
+    hidden_num = 100
     batch_size = 50
     train_size = 9000
     epoch = 200
     steps = int(train_size/batch_size)
 
-    enc_cell = ConvLSTMCell(1000, (in_h, in_w), [6,6])
-    dec_cell = ConvLSTMCell(1000, (in_h, in_w), [6,6])
+    enc_cell = ConvLSTMCell(100, (in_h, in_w), [6,6])
+    dec_cell = ConvLSTMCell(100, (in_h, in_w), [6,6])
 
     inputs = tf.placeholder(tf.float32, shape = [maxtime, batch_size, in_h, in_w, 1], name='inputs')
     ae = Autoencoder(inputs, hidden_num, enc_cell=enc_cell, dec_cell=dec_cell) 
