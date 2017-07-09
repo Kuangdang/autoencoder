@@ -25,12 +25,9 @@ class Autoencoder:
         with tf.variable_scope('encode', reuse=None):
             _, enc_state = tf.nn.dynamic_rnn(self.enc_cell, inputs, dtype=tf.float32, time_major=True)
 
-        saved_output = tf.Variable(tf.zeros([batch_size, in_h, in_w, self.hidden_num]), trainable=False)
+        saved_output = tf.Variable(tf.zeros([batch_size, in_h, in_w, self.dec_cell.output_size()]), trainable=False)
         saved_state = tf.Variable(tf.zeros([batch_size, in_h, in_w, self.hidden_num]), trainable=False)
 
-        #projection weights and biases
-        w = tf.Variable(tf.truncated_normal([1, 1, self.hidden_num, channels], -0.1 , 0.1, dtype=tf.float32), name='w')
-        b = tf.Variable(tf.zeros([1, in_h, in_w, channels]), name='b', dtype=tf.float32)
 
         outputs = list()
         output = saved_output
@@ -49,7 +46,6 @@ class Autoencoder:
         #state saving across unrolling
         with tf.control_dependencies([saved_output.assign(output),
                                       saved_state.assign(state)]):
-            outputs = [tf.nn.conv2d(i, w, [1, 1, 1, 1], "SAME") + b for i in outputs]
             self.outputs = tf.stack(outputs)
             #reverse the outputs to make the training easier
             reversed_outputs = outputs[::-1]
@@ -70,10 +66,11 @@ class Autoencoder:
         self.loss_sum = tf.summary.scalar('loss', self.loss)
 
 if __name__ =='__main__':
-    f = open("/home/stud/wangc/lab/record/log", "w+")  
+    PATH = "/home/stud/wangc/lab/record/"
+    f = open(PATH + "log", "w+") 
     data = np.load('/home/stud/wangc/lab/mnist_test_seq.npy')
     data = np.around(data/255, decimals=5)
-    data = data.reshape(data.shape[0],data.shape[1], data.shape[2], data.shape[3], 1)
+    data = data.reshape(data.shape[0], data.shape[1], data.shape[2], data.shape[3], 1)
     maxtime = data.shape[0]
     in_h = data.shape[2]
     in_w = data.shape[3]
@@ -83,8 +80,8 @@ if __name__ =='__main__':
     epoch = 200
     steps = int(train_size/batch_size)
 
-    enc_cell = ConvLSTMCell(100, (in_h, in_w), [6,6])
-    dec_cell = ConvLSTMCell(100, (in_h, in_w), [6,6])
+    enc_cell = ConvLSTMCell(100, (in_h, in_w), [6,6], 1)
+    dec_cell = ConvLSTMCell(100, (in_h, in_w), [6,6], 1)
 
     inputs = tf.placeholder(tf.float32, shape = [maxtime, batch_size, in_h, in_w, 1], name='inputs')
     ae = Autoencoder(inputs, hidden_num, enc_cell=enc_cell, dec_cell=dec_cell) 
@@ -98,25 +95,26 @@ if __name__ =='__main__':
                 '/home/stud/wangc/lab/record/logdir'+'/train', sess.graph)
         validate_writer = tf.summary.FileWriter(
                 '/home/stud/wangc/lab/record/logdir'+'/validate', sess.graph) 
-        val_outputs = list()
         for j in range(epoch):
             for i in range(steps):
                 _, train_sum = sess.run([ae.train, ae.loss_sum], feed_dict={inputs:(data[:,i*batch_size:(i+1)*batch_size])})
             train_writer.add_summary(train_sum, j)
-            val_output, val_sum = sess.run([ae.outputs, ae.loss_sum], feed_dict={inputs:(data[:,train_size:train_size+batch_size])})
+            _, val_sum = sess.run([ae.outputs, ae.loss_sum], feed_dict={inputs:(data[:,train_size:train_size+batch_size])})
             validate_writer.add_summary(val_sum, j)
-            if j%20 == 0:
-                val_outputs.append(val_output)
-        val_outputs = np.array(val_outputs)
         train_writer.close()
         validate_writer.close()
 
-        test_outputs, test_l = sess.run([ae.outputs, ae.loss], feed_dict={inputs:data[:,9500:9500+batch_size]})
-        print("test error %f" % test_l, file=f)
+        test_sum = 0
+        test_steps = int(test_size/batch_size)
+        for k in range(test_steps):
+            test_outputs, test_l = sess.run([ae.outputs, ae.loss], feed_dict={inputs:data[:,9500+k*batch_size:9500+(k+1)*batch_size]})
+            test_sum += test_l 
+        average_test = test_sum/test_steps
+        print("test error %f" % average_test, file=f)
 
-        np.savez_compressed("/home/stud/wangc/lab/record/outputs",
-                val_out=val_outputs, val_in=data[:,9000:9000+batch_size], test_out=test_outputs, test_in=data[:,9500:9500+batch_size])
-    
+        np.savez_compressed(PATH + "outputs",
+                test_out=test_outputs, test_in=data[:,-batch_size:-1])
+     
     print('end---------------------------------')
     f.close()
     sys.exit(0)
