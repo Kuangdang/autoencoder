@@ -106,11 +106,12 @@ if __name__ =='__main__':
         validate_writer.close()
 
         test_sum = 0
-        test_steps = int(test_size/batch_size))
+        test_steps = int(test_size/batch_size)
         for k in range(test_steps):
             test_outputs, test_l = sess.run([ae.outputs, ae.loss], feed_dict={inputs:data[:,9500+k*batch_size:9500+(k+1)*batch_size]})
             test_sum += test_l 
-        print("test error %f" % test_sum/test_steps, file=f)
+        average_test = test_sum/test_steps
+        print("test error %f" % average_test, file=f)
 
         np.savez_compressed(PATH + "outputs",
                 test_out=test_outputs, test_in=data[:,-batch_size:])
