@@ -36,13 +36,12 @@ class ConvLSTMCell(RNNCell):
         return tuple([tf.zeros([batch_size] + s, dtype=dtype) for s in state_size])
 
     def __call__(self, inputs, state, scope=None):
-        debug_here()
         c, h = state
         dtype = inputs.dtype
-        batch_size = inputs.get_shape()[0]
-        in_h = inputs.get_shape()[1]
-        in_w = inputs.get_shape()[2]
-        channels = inputs.get_shape()[3] 
+        batch_size = inputs.get_shape().as_list()[0]
+        in_h = inputs.get_shape().as_list()[1]
+        in_w = inputs.get_shape().as_list()[2]
+        channels = inputs.get_shape().as_list()[3] 
         f_h = self._filter_size[0]
         f_w = self._filter_size[1]
 
@@ -80,13 +79,11 @@ class ConvLSTMCell(RNNCell):
         #new h
         new_h = output_gate * self._activation(new_c)
         if self._num_proj:
-            w = tf.Variable(tf.truncated_normal([1, 1, self._output_size[2], channels], -0.1 , 0.1, dtype=tf.float32), name='w')
+            w = tf.Variable(tf.truncated_normal([1, 1, self._num_units, channels], -0.1 , 0.1, dtype=tf.float32), name='w')
             b = tf.Variable(tf.zeros([1, in_h, in_w, channels]), name='b', dtype=tf.float32)
             new_h = tf.nn.conv2d(new_h, w, [1, 1, 1, 1], "SAME") + b
-        '''
-        shape = new_h.get_shape()
-        print("output shape", shape)
+
+        shape = new_h.get_shape().as_list()
         new_h.set_shape([None, shape[1], shape[2], shape[3]])
-        print("cell finished")
-        '''
+
         return new_h, (new_c, new_h)

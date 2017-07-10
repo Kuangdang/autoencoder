@@ -73,7 +73,7 @@ if __name__ =='__main__':
     data = data.reshape(data.shape[0],data.shape[1],-1)
     maxtime = data.shape[0]
     desired = data.shape[2]
-    hidden_num = 2000
+    hidden_num = 100
     batch_size = 50
     train_size = 9000
     test_size = 500
@@ -114,7 +114,7 @@ if __name__ =='__main__':
         print("test error %f" % average_test, file=f)
 
         np.savez_compressed(PATH + "outputs",
-                test_out=test_outputs, test_in=data[:,-batch_size:])
+                test_out=test_outputs, test_in=data[:,-batch_size:-1])
     
     print('end---------------------------------')
     f.close()
