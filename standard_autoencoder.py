@@ -3,7 +3,7 @@ import numpy as np
 #import matplotlib.image as mpimg
 import tensorflow as tf
 import sys
-from lstmcell import LSTMCell
+#from lstmcell import LSTMCell
 
 #autoencoder class
 class Autoencoder:
@@ -73,7 +73,7 @@ if __name__ =='__main__':
     data = data.reshape(data.shape[0],data.shape[1],-1)
     maxtime = data.shape[0]
     desired = data.shape[2]
-    hidden_num = 100
+    hidden_num = 5000
     batch_size = 50
     train_size = 9000
     test_size = 500

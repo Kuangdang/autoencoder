@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 import sys
 from convcell import ConvLSTMCell
+from conv_wolter import ClassicConvLSTM
 from IPython.core.debugger import Tracer; debug_here = Tracer()
 
 

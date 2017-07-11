@@ -2,4 +2,4 @@
     export CUDA_VISIBLE_DEVICES=$1
     echo $CUDA_VISIBLE_DEVICES
     source activate tensorflow
-    python ./autoencoder.py
+    python $2

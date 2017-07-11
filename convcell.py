@@ -1,6 +1,5 @@
 from tensorflow.python.ops.rnn_cell_impl import RNNCell                                                                        
 import tensorflow as tf
-#from tensorflow.contrib.rnn.python.ops.core_rnn_cell_impl import _checked_scope
 from tensorflow.python.ops.math_ops import tanh
 from tensorflow.python.ops.math_ops import sigmoid
 
