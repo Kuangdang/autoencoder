@@ -1,0 +1,35 @@
+---------------- start ----------------
+Mon Jul 10 2017 21:28:19
+max threads: 10
+max memory: 10240 MB
+time limit: 24 hours
+gpu id(s): 1
+---------------------------------------
+passed parameters: 1 standard_autoencoder.py
+1
+2017-07-10 21:28:35.519794: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+2017-07-10 21:28:35.519821: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+2017-07-10 21:28:35.519826: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+2017-07-10 21:28:35.519830: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
+2017-07-10 21:28:35.519834: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use FMA instructions, but these are available on your machine and could speed up CPU computations.
+2017-07-10 21:28:36.385513: I tensorflow/core/common_runtime/gpu/gpu_device.cc:887] Found device 0 with properties: 
+name: TITAN X (Pascal)
+major: 6 minor: 1 memoryClockRate (GHz) 1.531
+pciBusID 0000:03:00.0
+Total memory: 11.90GiB
+Free memory: 11.76GiB
+2017-07-10 21:28:36.385584: I tensorflow/core/common_runtime/gpu/gpu_device.cc:908] DMA: 0 
+2017-07-10 21:28:36.385596: I tensorflow/core/common_runtime/gpu/gpu_device.cc:918] 0:   Y 
+2017-07-10 21:28:36.385609: I tensorflow/core/common_runtime/gpu/gpu_device.cc:977] Creating TensorFlow device (/gpu:0) -> (device: 0, name: TITAN X (Pascal), pci bus id: 0000:03:00.0)
+2017-07-10 21:28:39.716747: I tensorflow/core/common_runtime/gpu/pool_allocator.cc:247] PoolAllocator: After 3508 get requests, put_count=3488 evicted_count=1000 eviction_rate=0.286697 and unsatisfied allocation rate=0.31927
+2017-07-10 21:28:39.716806: I tensorflow/core/common_runtime/gpu/pool_allocator.cc:259] Raising pool_size_limit_ from 100 to 110
+2017-07-10 21:28:50.389763: I tensorflow/core/common_runtime/gpu/pool_allocator.cc:247] PoolAllocator: After 42233 get requests, put_count=42224 evicted_count=1000 eviction_rate=0.0236832 and unsatisfied allocation rate=0.0244359
+2017-07-10 21:28:50.389845: I tensorflow/core/common_runtime/gpu/pool_allocator.cc:259] Raising pool_size_limit_ from 256 to 281
+create session
+beginning-------------------------------
+initialized
+end---------------------------------
+----------------- end -----------------
+Mon Jul 10 2017 21:43:17
+elapsed time: 000:14:58
+---------------------------------------

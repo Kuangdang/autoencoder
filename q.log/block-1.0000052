@@ -1,0 +1,53 @@
+---------------- start ----------------
+Sun Jul 09 2017 20:02:45
+max threads: 10
+max memory: 10240 MB
+time limit: 24 hours
+gpu id(s): 2
+---------------------------------------
+passed parameters: 2 conv_autoencoder.py
+2
+]0;IPython: lab/autoencoderTraceback (most recent call last):
+  File "conv_autoencoder.py", line 87, in <module>
+    ae = Autoencoder(inputs, hidden_num, enc_cell=enc_cell, dec_cell=dec_cell) 
+  File "conv_autoencoder.py", line 26, in __init__
+    _, enc_state = tf.nn.dynamic_rnn(self.enc_cell, inputs, dtype=tf.float32, time_major=True)
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/ops/rnn.py", line 553, in dynamic_rnn
+    dtype=dtype)
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/ops/rnn.py", line 720, in _dynamic_rnn_loop
+    swap_memory=swap_memory)
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/ops/control_flow_ops.py", line 2623, in while_loop
+    result = context.BuildLoop(cond, body, loop_vars, shape_invariants)
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/ops/control_flow_ops.py", line 2456, in BuildLoop
+    pred, body, original_loop_vars, loop_vars, shape_invariants)
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/ops/control_flow_ops.py", line 2406, in _BuildLoop
+    body_result = body(*packed_vars_for_body)
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/ops/rnn.py", line 705, in _time_step
+    (output, new_state) = call_cell()
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/ops/rnn.py", line 691, in <lambda>
+    call_cell = lambda: cell(input_t, state)
+  File "/home/wangc/lab/autoencoder/convcell.py", line 82, in __call__
+    w = tf.Variable(tf.truncated_normal([1, 1, self._output_size[2], channels], -0.1 , 0.1, dtype=tf.float32), name='w')
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/ops/random_ops.py", line 167, in truncated_normal
+    shape_tensor = _ShapeTensor(shape)
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/ops/random_ops.py", line 42, in _ShapeTensor
+    return ops.convert_to_tensor(shape, dtype=dtype, name="shape")
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/framework/ops.py", line 639, in convert_to_tensor
+    as_ref=False)
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/framework/ops.py", line 704, in internal_convert_to_tensor
+    ret = conversion_func(value, dtype=dtype, name=name, as_ref=as_ref)
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/framework/constant_op.py", line 113, in _constant_tensor_conversion_function
+    return constant(v, dtype=dtype, name=name)
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/framework/constant_op.py", line 102, in constant
+    tensor_util.make_tensor_proto(value, dtype=dtype, shape=shape, verify_shape=verify_shape))
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/framework/tensor_util.py", line 444, in make_tensor_proto
+    tensor_proto.string_val.extend([compat.as_bytes(x) for x in proto_values])
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/framework/tensor_util.py", line 444, in <listcomp>
+    tensor_proto.string_val.extend([compat.as_bytes(x) for x in proto_values])
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.5/site-packages/tensorflow/python/util/compat.py", line 65, in as_bytes
+    (bytes_or_text,))
+TypeError: Expected binary or unicode string, got 1
+----------------- end -----------------
+Sun Jul 09 2017 20:03:00
+elapsed time: 000:00:14
+---------------------------------------

@@ -1,0 +1,17 @@
+---------------- start ----------------
+Sun Jul 09 2017 00:21:13
+max threads: 10
+max memory: 10240 MB
+time limit: 24 hours
+gpu id(s): 2
+---------------------------------------
+passed parameters: 2 standard_autoencoder.py
+2
+  File "standard_autoencoder.py", line 109
+    test_steps = int(test_size/batch_size))
+                                          ^
+SyntaxError: invalid syntax
+----------------- end -----------------
+Sun Jul 09 2017 00:21:14
+elapsed time: 000:00:01
+---------------------------------------

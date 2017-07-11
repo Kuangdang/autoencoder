@@ -1,0 +1,22 @@
+---------------- start ----------------
+Sun Jul 09 2017 20:01:13
+max threads: 10
+max memory: 10240 MB
+time limit: 24 hours
+gpu id(s): 2
+---------------------------------------
+passed parameters: 2 conv_autoencoder.py
+2
+]0;IPython: lab/autoencoder> /home/wangc/lab/autoencoder/convcell.py(40)__call__()
+     38     def __call__(self, inputs, state, scope=None):
+     39         debug_here()
+---> 40         c, h = state
+     41         dtype = inputs.dtype
+     42         batch_size = inputs.get_shape()[0]
+
+ipdb> 
+Exiting Debugger.
+----------------- end -----------------
+Sun Jul 09 2017 20:01:27
+elapsed time: 000:00:14
+---------------------------------------

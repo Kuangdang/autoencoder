@@ -1,0 +1,19 @@
+---------------- start ----------------
+Tue Jul 11 2017 12:53:18
+max threads: 10
+max memory: 10240 MB
+time limit: 24 hours
+gpu id(s): 0
+---------------------------------------
+passed parameters: 1 conv_autoencoder.py
+1
+Traceback (most recent call last):
+  File "conv_autoencoder.py", line 6, in <module>
+    from convcell import ConvLSTMCell
+  File "/home/wangc/lab/autoencoder/convcell.py", line 1, in <module>
+    from tensorflow.python.ops.rnn_cell_impl import _RNNCell as RNNCell                                                                        
+ImportError: cannot import name '_RNNCell'
+----------------- end -----------------
+Tue Jul 11 2017 12:53:21
+elapsed time: 000:00:02
+---------------------------------------

@@ -3,7 +3,7 @@ import numpy as np
 #import matplotlib.image as mpimg
 import tensorflow as tf
 import sys
-from lstmcell import LSTMCell
+from custom_cell import LSTMCell
 
 #autoencoder class
 class Autoencoder:

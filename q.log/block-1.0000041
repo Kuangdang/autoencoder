@@ -1,0 +1,14 @@
+---------------- start ----------------
+Sun Jul 09 2017 00:20:21
+max threads: 10
+max memory: 10240 MB
+time limit: 24 hours
+gpu id(s): 2
+---------------------------------------
+passed parameters: standard_autoencoder.py 2
+standard_autoencoder.py
+python: can't open file '2': [Errno 2] No such file or directory
+----------------- end -----------------
+Sun Jul 09 2017 00:20:23
+elapsed time: 000:00:01
+---------------------------------------
