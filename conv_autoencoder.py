@@ -4,6 +4,8 @@ import numpy as np
 import tensorflow as tf
 import sys
 from convcell import ConvLSTMCell
+from IPython.core.debugger import Tracer; debug_here = Tracer()
+
 
 #autoencoder class
 class Autoencoder:
@@ -77,7 +79,7 @@ if __name__ =='__main__':
     hidden_num = 100
     batch_size = 50
     train_size = 9000
-    epoch = 200
+    epoch = 2
     steps = int(train_size/batch_size)
 
     enc_cell = ConvLSTMCell(100, (in_h, in_w), [6,6], 1)

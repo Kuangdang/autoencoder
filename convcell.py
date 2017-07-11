@@ -1,10 +1,8 @@
-from tensorflow.python.ops.rnn_cell_impl import _RNNCell as RNNCell                                                                        
+from tensorflow.python.ops.rnn_cell_impl import RNNCell                                                                        
 import tensorflow as tf
 #from tensorflow.contrib.rnn.python.ops.core_rnn_cell_impl import _checked_scope
 from tensorflow.python.ops.math_ops import tanh
 from tensorflow.python.ops.math_ops import sigmoid
-from tensorflow.python.ops import variable_scope as vs
-from IPython.core.debugger import Tracer; debug_here = Tracer()
 
 
 class ConvLSTMCell(RNNCell):
@@ -83,7 +81,14 @@ class ConvLSTMCell(RNNCell):
             b = tf.Variable(tf.zeros([1, in_h, in_w, channels]), name='b', dtype=tf.float32)
             new_h = tf.nn.conv2d(new_h, w, [1, 1, 1, 1], "SAME") + b
 
-        shape = new_h.get_shape().as_list()
-        new_h.set_shape([None, shape[1], shape[2], shape[3]])
+        if self._reuse == None:
+            self._reuse = True
 
         return new_h, (new_c, new_h)
+
+
+if __name__ == '__main__':
+   convcell = ConvLSTMCell(100, [64,64],[8,8], 1) 
+   output = convcell.zero_state(100, dtype=tf.float32)
+   output = convcell(output[1], output)
+   print(output)
