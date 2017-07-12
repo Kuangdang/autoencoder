@@ -12,12 +12,12 @@ class LSTMCell(RNNCell):
             self._activation = activation
             self._reuse = reuse
 
-    if self._num_proj:
-        self._state_size = (self._num_units, self._num_proj)
-        self._output_size = self._num_proj
-    else:
-        self._state_size = (self._num_units, self._num_units)
-        self._output_size = self._num_units
+            if self._num_proj:
+                self._state_size = (self._num_units, self._num_proj)
+                self._output_size = self._num_proj
+            else:
+                self._state_size = (self._num_units, self._num_units)
+                self._output_size = self._num_units
 
     @property
     def state_size(self):

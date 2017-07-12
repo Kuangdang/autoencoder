@@ -1,26 +1,14 @@
-from tensorflow.python.ops.rnn_cell_impl import _RNNCell as RNNCell                                                                        
+from tensorflow.python.ops.rnn_cell_impl import RNNCell                                                                        
 from tensorflow.python.ops.rnn_cell_impl import LSTMStateTuple
 import tensorflow as tf
+import numpy as np
 #from tensorflow.contrib.rnn.python.ops.core_rnn_cell_impl import _checked_scope
 from tensorflow.python.ops.math_ops import tanh
 from tensorflow.python.ops.math_ops import sigmoid
 from tensorflow.python.ops import variable_scope as vs
 class ClassicConvLSTM(RNNCell):
-""" Classical reimplementation of a convolutional LSTM with peepholes.
-Reference: Convolutional LSTM network: A machine learning approach
-for precipitation nowcasting.
-"""
-
     def __init__(self, kernel_size, depth, input_dims, output_depth=None,
             strides=None, reuse=None):
-    """ input_dims: [height, width, channels]
-    kernel_size: The size of the kernels, which are slided over the image
-    [size_in_X, size_in_Y].
-    strides: The step sizes with which the sliding is done (will lead to
-    downsampling if >1) [size_in_X, size_in_Y].
-    depth: The kernel depth.
-    output_depth: The depth of the output convolution.
-    """
         self.reuse = reuse
         self.kernel_size = kernel_size
         self.depth = depth
@@ -33,15 +21,11 @@ for precipitation nowcasting.
 
     @property
     def recurrent_size(self):
-    """ Shape of the tensors flowing along the recurrent connections.
-    """
         return tf.TensorShape([np.ceil(self.input_dims[0] / self.strides[0]),
             np.ceil(self.input_dims[1] / self.strides[1]), self.depth])
 
     @property
     def output_size(self):
-    """ Integer or TensorShape: size of outputs produced by this cell.
-    """
         if self.output_depth is None:
             return self.recurrent_size
         else:
@@ -54,21 +38,9 @@ for precipitation nowcasting.
 
     @property
     def state_size(self):
-    """size(s) of state(s) used by this cell.
-    It can be represented by an Integer,
-    a TensorShape or a tuple of Integers
-    or TensorShapes.
-    """
         return LSTMStateTuple(self.recurrent_size, self.recurrent_size)
 
     def __call__(self, inputs, state, scope=None):
-    """
-    Args:
-    inputs: Input tensor of shape [batch_size, height, width, channels]
-    Returns:
-    outputs: shape self.output_size
-    state: shape self.state_size
-    """
         input_shape = tf.Tensor.get_shape(inputs)
         num_channels = int(input_shape[-1])
 
