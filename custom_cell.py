@@ -1,4 +1,4 @@
-from tensorflow.python.ops.rnn_cell_impl import RNNCell 
+from tensorflow.python.ops.rnn_cell_impl import _RNNCell as RNNCell
 import tensorflow as tf
 #from tensorflow.contrib.rnn.python.ops.core_rnn_cell_impl import _checked_scope
 from tensorflow.python.ops.math_ops import tanh
@@ -75,8 +75,6 @@ class LSTMCell(RNNCell):
                 new_h = tf.matmul(new_h, w) + b
             
             return new_h, (new_c, new_h)
-
-
 
 class ConvLSTMCell(RNNCell):
     def __init__(self, num_units, shape, filter_size, num_proj=None, activation=tanh, reuse=None):
