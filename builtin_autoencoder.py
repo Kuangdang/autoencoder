@@ -79,12 +79,12 @@ if __name__ =='__main__':
     data = data.reshape(data.shape[0],data.shape[1],-1)
     maxtime = data.shape[0]
     desired = data.shape[2]
-    hidden_num = 5000
+    hidden_num = 50
     batch_size = 50
     train_size = 9000
     val_size = 500
     test_size = 500
-    epoch = 80
+    epoch = 200
     steps = int(train_size/batch_size)
     val_steps = int(val_size/batch_size)
     test_steps = int(test_size/batch_size)
@@ -112,7 +112,8 @@ if __name__ =='__main__':
                         feed_dict={inputs:(data[:,val_start+p*batch_size:val_start+(p+1)*batch_size])})
                 val_loss_sum += val_loss
             val_avrg = val_loss_sum/val_steps
-            val_summa = tf.summary.scalar("val_summa", val_avrg)
+            val_summa = tf.Summary(value=[
+                tf.Summary.Value(tag="val_loss_tag", simple_value=val_avrg),])
             validate_writer.add_summary(val_summa, j)
         train_writer.close()
         validate_writer.close()
