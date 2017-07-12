@@ -1,0 +1,21 @@
+---------------- start ----------------
+Wed Jul 12 2017 12:09:04
+max threads: 10
+max memory: 10240 MB
+time limit: 24 hours
+gpu id(s): 3
+---------------------------------------
+passed parameters: 3 conv_wolter.py
+3
+Traceback (most recent call last):
+  File "conv_wolter.py", line 89, in <module>
+    ae = Autoencoder(inputs, hidden_num, enc_cell=enc_cell, dec_cell=dec_cell) 
+  File "conv_wolter.py", line 28, in __init__
+    _, enc_state = tf.nn.dynamic_rnn(self.enc_cell, inputs, dtype=tf.float32, time_major=True)
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.6/site-packages/tensorflow/python/ops/rnn.py", line 508, in dynamic_rnn
+    raise TypeError("cell must be an instance of RNNCell")
+TypeError: cell must be an instance of RNNCell
+----------------- end -----------------
+Wed Jul 12 2017 12:09:18
+elapsed time: 000:00:14
+---------------------------------------

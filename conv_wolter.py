@@ -5,6 +5,7 @@ import tensorflow as tf
 import sys
 from convcell import ConvLSTMCell
 from cell_wolter import ClassicConvLSTM
+from tensorflow.python.ops.rnn_cell_impl import RNNCell
 
 
 #autoencoder class
@@ -86,6 +87,8 @@ if __name__ =='__main__':
     dec_cell = ClassicConvLSTM([6,6], 100, (in_h, in_w), output_depth=1)
 
     inputs = tf.placeholder(tf.float32, shape = [maxtime, batch_size, in_h, in_w, 1], name='inputs')
+    if isinstance(enc_cell, RNNCell):
+        print("i'm the right one")
     ae = Autoencoder(inputs, hidden_num, enc_cell=enc_cell, dec_cell=dec_cell) 
     print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s" % (hidden_num, batch_size, epoch, ae.optimizer, ae.enc_cell), file=f)
     f.flush()

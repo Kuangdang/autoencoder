@@ -1,14 +1,10 @@
-from tensorflow.python.ops.rnn_cell_impl import RNNCell                                                                        
+from tensorflow.python.ops.rnn_cell_impl import RNNCell                                                 
 from tensorflow.python.ops.rnn_cell_impl import LSTMStateTuple
 import tensorflow as tf
 import numpy as np
-#from tensorflow.contrib.rnn.python.ops.core_rnn_cell_impl import _checked_scope
-from tensorflow.python.ops.math_ops import tanh
-from tensorflow.python.ops.math_ops import sigmoid
-from tensorflow.python.ops import variable_scope as vs
+
 class ClassicConvLSTM(RNNCell):
-    def __init__(self, kernel_size, depth, input_dims, output_depth=None,
-            strides=None, reuse=None):
+    def __init__(self, kernel_size, depth, input_dims, output_depth=None, strides=None, reuse=None):
         self.reuse = reuse
         self.kernel_size = kernel_size
         self.depth = depth

@@ -1,0 +1,17 @@
+---------------- start ----------------
+Wed Jul 12 2017 12:24:36
+max threads: 10
+max memory: 10240 MB
+time limit: 24 hours
+gpu id(s): 1
+---------------------------------------
+passed parameters: 3 conv_wolter.py
+3
+Traceback (most recent call last):
+  File "conv_wolter.py", line 89, in <module>
+    if isinstance(enc_cell, RNNCell):
+NameError: name 'RNNCell' is not defined
+----------------- end -----------------
+Wed Jul 12 2017 12:24:50
+elapsed time: 000:00:13
+---------------------------------------
