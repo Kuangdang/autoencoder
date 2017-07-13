@@ -1,0 +1,25 @@
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{SCW{\etalchar{+}}15}
+
+\bibitem[GSK{\etalchar{+}}15]{odyssey}
+Klaus Greff, Rupesh~Kumar Srivastava, Jan Koutn{\'{\i}}k, Bas~R. Steunebrink,
+  and J{\"{u}}rgen Schmidhuber.
+\newblock {LSTM:} {A} search space odyssey.
+\newblock {\em CoRR}, abs/1503.04069, 2015.
+
+\bibitem[SCW{\etalchar{+}}15]{convlstm}
+Xingjian Shi, Zhourong Chen, Hao Wang, Dit{-}Yan Yeung, Wai{-}Kin Wong, and
+  Wang{-}chun Woo.
+\newblock Convolutional {LSTM} network: {A} machine learning approach for
+  precipitation nowcasting.
+\newblock In {\em Advances in Neural Information Processing Systems 28: Annual
+  Conference on Neural Information Processing Systems 2015, December 7-12,
+  2015, Montreal, Quebec, Canada}, pages 802--810, 2015.
+
+\bibitem[SMS15]{ulvr}
+Nitish Srivastava, Elman Mansimov, and Ruslan Salakhutdinov.
+\newblock Unsupervised learning of video representations using lstms.
+\newblock In {\em Proceedings of the 32nd International Conference on Machine
+  Learning, {ICML} 2015, Lille, France, 6-11 July 2015}, pages 843--852, 2015.
+
+\end{thebibliography}
