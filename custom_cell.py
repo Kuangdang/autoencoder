@@ -133,44 +133,49 @@ class ConvLSTMCell(RNNCell):
         f_h = self._filter_size[0]
         f_w = self._filter_size[1]
 
-        #input gate
-        Wxi = tf.get_variable("Wxi", [f_h, f_w, channels, self._num_units], dtype=dtype)
-        Whi = tf.get_variable("Whi", [f_h, f_w, self._output_size[-1], self._num_units], dtype=dtype)
-        Wci = tf.get_variable("Wci", [1, in_h, in_w, self._num_units], dtype=dtype)
-        bi = tf.get_variable("bi", [1, in_h, in_w, self._num_units], dtype=dtype)
-        input_gate = sigmoid(tf.nn.conv2d(inputs, Wxi, [1,1,1,1], "SAME") + tf.nn.conv2d(h, Whi, [1,1,1,1], "SAME")
-                + Wci*c + bi)
+        with tf.variable_scope(scope or str(type(self).__name__), reuse=self.reuse):
+            input_filter = [f_h, f_w, channels, self._num_units]
+            recurrent_filter = [f_h, f_w, self._output_size[-1], self._num_units]
+            peephole_weight = [1, in_h, in_w, self._num_units] 
+            bias = [1, in_h, in_w, self._num_units]
+            #input gate
+            Wxi = tf.get_variable("Wxi", input_filter, dtype=dtype)
+            Whi = tf.get_variable("Whi", recurrent_filter, dtype=dtype)
+            Wci = tf.get_variable("Wci", peephole_weight, dtype=dtype)
+            bi = tf.get_variable("bi", bias, dtype=dtype)
+            input_gate = sigmoid(tf.nn.conv2d(inputs, Wxi, [1,1,1,1], "SAME") 
+                                     + tf.nn.conv2d(h, Whi, [1,1,1,1], "SAME") + Wci*c + bi)
 
-        #forget gate
-        Wxf = tf.get_variable("Wxf", [f_h, f_w, channels, self._num_units], dtype=dtype)
-        Whf = tf.get_variable("Whf", [f_h, f_w, self._output_size[-1], self._num_units] , dtype=dtype)
-        Wcf = tf.get_variable("Wcf", [1, in_h, in_w, self._num_units], dtype=dtype)
-        bf = tf.get_variable("bf", [1, in_h, in_w, self._num_units], dtype=dtype)
-        forget_gate = sigmoid(tf.nn.conv2d(inputs, Wxf, [1,1,1,1], "SAME") + tf.nn.conv2d(h, Whf, [1,1,1,1], "SAME")
-                + Wcf*c + bf)
+            #forget gate
+            Wxf = tf.get_variable("Wxf", input_filter, dtype=dtype)
+            Whf = tf.get_variable("Whf", recurrent_filter , dtype=dtype)
+            Wcf = tf.get_variable("Wcf", peephole_weight, dtype=dtype)
+            bf = tf.get_variable("bf", bias, dtype=dtype)
+            forget_gate = sigmoid(tf.nn.conv2d(inputs, Wxf, [1,1,1,1], "SAME")
+                                    + tf.nn.conv2d(h, Whf, [1,1,1,1], "SAME") + Wcf*c + bf)
 
-        #new cell state
-        Wxc = tf.get_variable("Wxc", [f_h, f_w, channels, self._num_units], dtype=dtype)
-        Whc = tf.get_variable("Whc", [f_h, f_w, self._output_size[-1], self._num_units], dtype=dtype)
-        bc = tf.get_variable("bc", [1, in_h, in_w, self._num_units], dtype=dtype)
-        new_c = forget_gate * c + input_gate * self._activation(tf.nn.conv2d(inputs, Wxc, [1,1,1,1], "SAME")
-                + tf.nn.conv2d(h, Whc, [1,1,1,1], "SAME") + bc)
+            #new cell state
+            Wxc = tf.get_variable("Wxc", input_filter, dtype=dtype)
+            Whc = tf.get_variable("Whc", recurrent_filter, dtype=dtype)
+            bc = tf.get_variable("bc", bias, dtype=dtype)
+            new_c = forget_gate * c + input_gate * self._activation(tf.nn.conv2d(inputs, Wxc, [1,1,1,1], "SAME")
+                             + tf.nn.conv2d(h, Whc, [1,1,1,1], "SAME") + bc)
 
-        #output gate
-        Wxo = tf.get_variable("Wxo", [f_h, f_w, channels, self._num_units], dtype=dtype)
-        Who = tf.get_variable("Who", [f_h, f_w, self._output_size[-1], self._num_units], dtype=dtype)
-        Wco = tf.get_variable("Wco", [1, in_h, in_w, self._num_units], dtype=dtype)
-        bo = tf.get_variable("bo", [1, in_h, in_w, self._num_units], dtype=dtype)
-        output_gate = sigmoid(tf.nn.conv2d(inputs, Wxo, [1,1,1,1], "SAME") + tf.nn.conv2d(h, Who, [1,1,1,1], "SAME")
-                + Wco*c + bo)
+            #output gate
+            Wxo = tf.get_variable("Wxo", input_filter, dtype=dtype)
+            Who = tf.get_variable("Who", recurrent_filter, dtype=dtype)
+            Wco = tf.get_variable("Wco", peephole_weight, dtype=dtype)
+            bo = tf.get_variable("bo", bias, dtype=dtype)
+            output_gate = sigmoid(tf.nn.conv2d(inputs, Wxo, [1,1,1,1], "SAME")
+                                    + tf.nn.conv2d(h, Who, [1,1,1,1], "SAME") + Wco*c + bo)
 
-        #new h
-        new_h = output_gate * self._activation(new_c)
-        if self._num_proj:
-            w = tf.get_variable(tf.truncated_normal([1, 1, self._num_units, self._num_proj], -0.1 , 0.1, dtype=tf.float32), name='w')
-            new_h = tf.nn.conv2d(new_h, w, [1, 1, 1, 1], "SAME") 
+            #new h
+            new_h = output_gate * self._activation(new_c)
+            if self._num_proj:
+                w = tf.get_variable("w", [in_h, in_w, self._num_units, self._num_proj])
+                new_h = tf.nn.conv2d(new_h, w, [1, 1, 1, 1], "SAME") 
 
-        if self._reuse == None:
-            self._reuse = True
+            if self._reuse == None:
+                self._reuse = True
 
-        return new_h, (new_c, new_h)
+            return new_h, (new_c, new_h)
