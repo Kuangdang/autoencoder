@@ -1,6 +1,6 @@
-from tensorflow.python.ops.rnn_cell_impl import RNNCell                                                 
-from tensorflow.python.ops.rnn_cell_impl import LSTMStateTuple
 import tensorflow as tf
+from tensorflow.python.ops.rnn_cell_impl import _RNNCell as RNNCell                                          
+from tensorflow.contrib.rnn import LSTMStateTuple
 import numpy as np
 
 class ClassicConvLSTM(RNNCell):
@@ -11,6 +11,7 @@ class ClassicConvLSTM(RNNCell):
         self.input_dims = [int(dim) for dim in input_dims]
         if strides is None:
             self.strides = [1, 1]
+            self.output_depth = None
         else:
             self.strides = strides
             self.output_depth = output_depth
