@@ -3,10 +3,7 @@ import numpy as np
 #import matplotlib.image as mpimg
 import tensorflow as tf
 import sys
-from convcell import ConvLSTMCell
-from conv_wolter import ClassicConvLSTM
-from IPython.core.debugger import Tracer; debug_here = Tracer()
-
+from custom_cell import ConvLSTMCell
 
 #autoencoder class
 class Autoencoder:
@@ -28,7 +25,7 @@ class Autoencoder:
         with tf.variable_scope('encode', reuse=None):
             _, enc_state = tf.nn.dynamic_rnn(self.enc_cell, inputs, dtype=tf.float32, time_major=True)
 
-        saved_output = tf.Variable(tf.zeros([batch_size, in_h, in_w, self.dec_cell.output_size()]), trainable=False)
+        saved_output = tf.Variable(tf.zeros([batch_size, in_h, in_w, self.dec_cell.output_size[-1]]), trainable=False)
         saved_state = tf.Variable(tf.zeros([batch_size, in_h, in_w, self.hidden_num]), trainable=False)
 
 
@@ -77,18 +74,18 @@ if __name__ =='__main__':
     maxtime = data.shape[0]
     in_h = data.shape[2]
     in_w = data.shape[3]
-    hidden_num = 100
     batch_size = 50
     train_size = 9000
     epoch = 2
     steps = int(train_size/batch_size)
 
-    enc_cell = ConvLSTMCell(100, (in_h, in_w), [6,6], 1)
-    dec_cell = ConvLSTMCell(100, (in_h, in_w), [6,6], 1)
+    enc_cell = ConvLSTMCell(30, (in_h, in_w), [6,6], 1)
+    dec_cell = ConvLSTMCell(30, (in_h, in_w), [6,6], 1)
 
     inputs = tf.placeholder(tf.float32, shape = [maxtime, batch_size, in_h, in_w, 1], name='inputs')
     ae = Autoencoder(inputs, hidden_num, enc_cell=enc_cell, dec_cell=dec_cell) 
-    print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s" % (hidden_num, batch_size, epoch, ae.optimizer, ae.enc_cell), file=f)
+    print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s" 
+            % (ae.enc_cell._hidden_num, batch_size, epoch, ae.optimizer, ae.enc_cell), file=f)
     f.flush()
     with tf.Session() as sess:
         print('beginning-------------------------------')

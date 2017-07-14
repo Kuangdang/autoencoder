@@ -2,7 +2,6 @@ import tensorflow as tf
 from tensorflow.python.ops.rnn_cell_impl import _RNNCell as RNNCell
 from tensorflow.python.ops.math_ops import tanh
 from tensorflow.python.ops.math_ops import sigmoid
-from tensorflow.python.ops import variable_scope as vs
 from tensorflow.contrib.rnn import LSTMStateTuple
 
 class LSTMCell(RNNCell):
@@ -105,24 +104,25 @@ class ConvLSTMCell(RNNCell):
     @property
     def state_size(self):
         if self._num_proj is not None:
-            tmp = ([self._shape[0], self._shape[1], self._num_units],
-                    self._output_size)
+            tmp = (tf.TensorShape([self._shape[0], self._shape[1], 
+                    self._num_units]), tf.TensorShape(self._output_size))
         else:
-            tmp = ([self._shape[0], self._shape[1], self._num_units],
-                    [self._shape[0], self._shape[1], self._num_units]) 
+            tmp = (tf.TensorShape([self._shape[0], self._shape[1],
+                     self._num_units]), tf.TensorShape([self._shape[0], 
+                    self._shape[1], self._num_units])) 
 
-        return tmp
+        return LSTMStateTuple(tmp[0], tmp[1])
  
 
     @property
     def output_size(self):
-        return self._output_size 
+        return tf.TensorShape(self._output_size) 
 
-
+    '''
     def zero_state(self, batch_size, dtype):
         state_size = self.state_size
         return tuple([tf.zeros([batch_size] + s, dtype=dtype) for s in state_size])
-
+    '''
     def __call__(self, inputs, state, scope=None):
         c, h = state
         dtype = inputs.dtype
@@ -133,7 +133,7 @@ class ConvLSTMCell(RNNCell):
         f_h = self._filter_size[0]
         f_w = self._filter_size[1]
 
-        with tf.variable_scope(scope or str(type(self).__name__), reuse=self.reuse):
+        with tf.variable_scope(scope or str(type(self).__name__), reuse=self._reuse):
             input_filter = [f_h, f_w, channels, self._num_units]
             recurrent_filter = [f_h, f_w, self._output_size[-1], self._num_units]
             peephole_weight = [1, in_h, in_w, self._num_units] 
@@ -178,4 +178,4 @@ class ConvLSTMCell(RNNCell):
             if self._reuse == None:
                 self._reuse = True
 
-            return new_h, (new_c, new_h)
+            return new_h, LSTMStateTuple(new_c, new_h)

@@ -72,7 +72,7 @@ class Autoencoder:
 
 if __name__ =='__main__':
     PATH = "./record/"
-    DATASET = "./mnist_test_seq.npy"
+    DATASET = "/home/stud/wangc/lab/mnist_test_seq.npy"
     f = open(PATH + "log", "w+")  
     data = np.load(DATASET)
     data = np.around(data/255, decimals=5)

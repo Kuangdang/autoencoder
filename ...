@@ -1,0 +1,13 @@
+Unstaged changes after reset:
+M	__pycache__/cell_wolter.cpython-36.pyc
+M	__pycache__/convcell.cpython-36.pyc
+M	__pycache__/custom_cell.cpython-36.pyc
+M	builtin_autoencoder.py
+M	conv_autoencoder.py
+M	conv_wolter.py
+M	convcell.py
+M	custom_cell.py
+D	q.log/block-1.0000112
+D	q.log/block-1.0000113
+D	q.log/block-1.0000114
+D	q.log/block-1.0000115
