@@ -1,6 +1,4 @@
 import numpy as np
-#import matplotlib.pyplot as plt
-#import matplotlib.image as mpimg
 import tensorflow as tf
 import sys
 from custom_cell import ConvLSTMCell
@@ -67,8 +65,9 @@ class Autoencoder:
 
 if __name__ =='__main__':
     PATH = "/home/stud/wangc/lab/record/"
+    DATASET = "/home/stud/wangc/lab/mnist_test_seq.npy"
     f = open(PATH + "log", "w+") 
-    data = np.load('/home/stud/wangc/lab/mnist_test_seq.npy')
+    data = np.load(DATASET)
     data = np.around(data/255, decimals=5)
     data = data.reshape(data.shape[0], data.shape[1], data.shape[2], data.shape[3], 1)
     maxtime = data.shape[0]
@@ -76,8 +75,14 @@ if __name__ =='__main__':
     in_w = data.shape[3]
     batch_size = 50
     train_size = 9000
-    epoch = 2
+    val_size = 500
+    test_size = 500
+    epoch = 50
     steps = int(train_size/batch_size)
+    val_steps = int(val_size/batch_size)
+    test_steps = int(test_size/batch_size)
+    val_start = train_size
+    test_start = val_start + val_size
 
     enc_cell = ConvLSTMCell(30, (in_h, in_w), [6,6], 1)
     dec_cell = ConvLSTMCell(30, (in_h, in_w), [6,6], 1)
@@ -88,26 +93,30 @@ if __name__ =='__main__':
             % (ae.enc_cell._hidden_num, batch_size, epoch, ae.optimizer, ae.enc_cell), file=f)
     f.flush()
     with tf.Session() as sess:
-        print('beginning-------------------------------')
         tf.global_variables_initializer().run()
-        print('initialized')
         train_writer = tf.summary.FileWriter(
-                '/home/stud/wangc/lab/record/logdir'+'/train', sess.graph)
+                PATH + 'logdir'+'/train', sess.graph)
         validate_writer = tf.summary.FileWriter(
-                '/home/stud/wangc/lab/record/logdir'+'/validate', sess.graph) 
+                PATH + 'logdir'+'/validate', sess.graph) 
         for j in range(epoch):
             for i in range(steps):
                 _, train_sum = sess.run([ae.train, ae.loss_sum], feed_dict={inputs:(data[:,i*batch_size:(i+1)*batch_size])})
             train_writer.add_summary(train_sum, j)
-            _, val_sum = sess.run([ae.outputs, ae.loss_sum], feed_dict={inputs:(data[:,train_size:train_size+batch_size])})
-            validate_writer.add_summary(val_sum, j)
-        train_writer.close()
-        validate_writer.close()
+
+            val_loss_sum = 0
+            for p in range(val_steps): 
+                _, val_sum, val_loss = sess.run([ae.outputs, ae.loss_sum, ae.loss],
+                        feed_dict={inputs:(data[:,val_start+p*batch_size:val_start+(p+1)*batch_size])})
+                val_loss_sum += val_loss
+            val_avrg = val_loss_sum/val_steps
+            val_summa = tf.Summary(value=[
+                tf.Summary.Value(tag="loss", simple_value=val_avrg),])
+            validate_writer.add_summary(val_summa, j)
 
         test_sum = 0
-        test_steps = int(test_size/batch_size)
         for k in range(test_steps):
-            test_outputs, test_l = sess.run([ae.outputs, ae.loss], feed_dict={inputs:data[:,9500+k*batch_size:9500+(k+1)*batch_size]})
+            test_outputs, test_l = sess.run([ae.outputs, ae.loss], 
+                    feed_dict={inputs:data[:,test_start+k*batch_size:test_start+(k+1)*batch_size]})
             test_sum += test_l 
         average_test = test_sum/test_steps
         print("test error %f" % average_test, file=f)
@@ -115,6 +124,5 @@ if __name__ =='__main__':
         np.savez_compressed(PATH + "outputs",
                 test_out=test_outputs, test_in=data[:,-batch_size:-1])
      
-    print('end---------------------------------')
     f.close()
     sys.exit(0)

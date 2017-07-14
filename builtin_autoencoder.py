@@ -105,7 +105,7 @@ if __name__ =='__main__':
             for i in range(steps):
                 _, train_sum = sess.run([ae.train, ae.loss_sum], feed_dict={inputs:(data[:,i*batch_size:(i+1)*batch_size])})
             train_writer.add_summary(train_sum, j)
-            '''
+            
             val_loss_sum = 0
             for p in range(val_steps): 
                 _, val_sum, val_loss = sess.run([ae.outputs, ae.loss_sum, ae.loss],
@@ -115,11 +115,7 @@ if __name__ =='__main__':
             val_summa = tf.Summary(value=[
                 tf.Summary.Value(tag="loss", simple_value=val_avrg),])
             validate_writer.add_summary(val_summa, j)
-            '''
-            val_output, val_sum = sess.run([ae.outputs, ae.loss_sum], feed_dict={inputs:(data[:,train_size:train_size+batch_size])})
-            validate_writer.add_summary(val_sum, j)
-        train_writer.close()
-        validate_writer.close()
+            
 
         test_sum = 0
         for k in range(test_steps):
