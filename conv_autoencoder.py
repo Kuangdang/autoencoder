@@ -5,7 +5,7 @@ from custom_cell import ConvLSTMCell
 
 #autoencoder class
 class Autoencoder:
-    def __init__(self, inputs, hidden_num, enc_cell, dec_cell, optimizer=None):
+    def __init__(self, inputs, enc_cell, dec_cell, optimizer=None):
         '''
         inputs shape [maxtime, batch_size, height, weight, channels]
         '''
@@ -16,7 +16,7 @@ class Autoencoder:
         channels  = inputs.get_shape().as_list()[4]
 
         
-        self.hidden_num = hidden_num
+        self.hidden_num = enc_cell._num_units
         self.enc_cell = enc_cell
         self.dec_cell = dec_cell
 
@@ -88,9 +88,9 @@ if __name__ =='__main__':
     dec_cell = ConvLSTMCell(30, (in_h, in_w), [6,6], 1)
 
     inputs = tf.placeholder(tf.float32, shape = [maxtime, batch_size, in_h, in_w, 1], name='inputs')
-    ae = Autoencoder(inputs, hidden_num, enc_cell=enc_cell, dec_cell=dec_cell) 
+    ae = Autoencoder(inputs, enc_cell=enc_cell, dec_cell=dec_cell) 
     print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s" 
-            % (ae.enc_cell._hidden_num, batch_size, epoch, ae.optimizer, ae.enc_cell), file=f)
+            % (ae.enc_cell._num_units, batch_size, epoch, ae.optimizer, ae.enc_cell), file=f)
     f.flush()
     with tf.Session() as sess:
         tf.global_variables_initializer().run()
