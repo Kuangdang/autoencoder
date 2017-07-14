@@ -77,15 +77,15 @@ if __name__ =='__main__':
     train_size = 9000
     val_size = 500
     test_size = 500
-    epoch = 50
+    epoch = 100
     steps = int(train_size/batch_size)
     val_steps = int(val_size/batch_size)
     test_steps = int(test_size/batch_size)
     val_start = train_size
     test_start = val_start + val_size
 
-    enc_cell = ConvLSTMCell(30, (in_h, in_w), [6,6], 1)
-    dec_cell = ConvLSTMCell(30, (in_h, in_w), [6,6], 1)
+    enc_cell = ConvLSTMCell(20, (in_h, in_w), [6,6], 1)
+    dec_cell = ConvLSTMCell(20, (in_h, in_w), [6,6], 1)
 
     inputs = tf.placeholder(tf.float32, shape = [maxtime, batch_size, in_h, in_w, 1], name='inputs')
     ae = Autoencoder(inputs, enc_cell=enc_cell, dec_cell=dec_cell) 
