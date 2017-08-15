@@ -5,7 +5,7 @@ from custom_cell import ConvLSTMCell
 
 #autoencoder class
 class Autoencoder:
-    def __init__(self, inputs, enc_cell, dec_cell, optimizer=None):
+    def __init__(self, inputs, enc_cell, dec_cell, optimizer=None, conditioned=None):
         '''
         inputs shape [maxtime, batch_size, height, weight, channels]
         '''
@@ -37,9 +37,17 @@ class Autoencoder:
             v = None
             for _ in range(maxtime):
                 with tf.variable_scope('unrolling', reuse=v):
-                    output, dec_state = self.dec_cell(dec_inputs, dec_state)
+                    if conditioned is None:
+                        output, dec_state = self.dec_cell(dec_inputs, dec_state)
+                    else:
+                        if v is None:
+                            output, dec_state = self.dec_cell(dec_inputs, dec_state)
+                        else:
+                            output, dec_state = self.dec_cell(output, dec_state)
+                        
                     v = True
                     outputs.append(output)
+
 
         #state saving across unrolling
         with tf.control_dependencies([saved_output.assign(output),
@@ -77,19 +85,22 @@ if __name__ =='__main__':
     train_size = 9000
     val_size = 500
     test_size = 500
-    epoch = 100
+    epoch = 300
     steps = int(train_size/batch_size)
     val_steps = int(val_size/batch_size)
     test_steps = int(test_size/batch_size)
     val_start = train_size
     test_start = val_start + val_size
 
-    enc_cell = ConvLSTMCell(20, (in_h, in_w), [6,6], 1)
-    dec_cell = ConvLSTMCell(20, (in_h, in_w), [6,6], 1)
+    enc_cell = ConvLSTMCell(30, (in_h, in_w), [8,8], 1)
+    dec_cell = ConvLSTMCell(30, (in_h, in_w), [8,8], 1)
 
     inputs = tf.placeholder(tf.float32, shape = [maxtime, batch_size, in_h, in_w, 1], name='inputs')
-    ae = Autoencoder(inputs, enc_cell=enc_cell, dec_cell=dec_cell) 
-    print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s" 
+
+    rmsOpti = tf.train.RMSPropOptimizer(0.0001)
+    ae = Autoencoder(inputs, enc_cell=enc_cell, dec_cell=dec_cell, optimizer=rmsOpti, conditioned=True) 
+    #ae = Autoencoder(inputs, enc_cell=enc_cell, dec_cell=dec_cell)
+    print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, conditioned" 
             % (ae.enc_cell._num_units, batch_size, epoch, ae.optimizer, ae.enc_cell), file=f)
     f.flush()
     with tf.Session() as sess:

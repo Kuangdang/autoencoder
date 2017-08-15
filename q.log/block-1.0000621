@@ -1,0 +1,9 @@
+---------------- start ----------------
+Tue Aug 15 2017 18:56:26
+max threads: 10
+max memory: 10240 MB
+time limit: 24 hours
+gpu id(s): 2
+---------------------------------------
+passed parameters: conv_autoencoder.py
+2

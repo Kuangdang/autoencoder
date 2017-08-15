@@ -12,6 +12,7 @@ class Autoencoder:
         batch_size = inputs.get_shape().as_list()[1]
         desired = inputs.get_shape().as_list()[2]
         
+        self.conditioned = conditioned 
         self.hidden_num = hidden_num
         if enc_cell is None:
             self.enc_cell = tf.contrib.rnn.LSTMCell(self.hidden_num, use_peepholes=True, num_proj=desired)
@@ -65,10 +66,12 @@ class Autoencoder:
         global_step = tf.Variable(0, trainable = False)
         gradients, v = zip(*self.optimizer.compute_gradients(self.loss))
         gradients, _ = tf.clip_by_global_norm(gradients, 5)
+        #gradients = [tf.clip_by_value(grad, -1, 1) for grad in gradients]
         self.train = self.optimizer.apply_gradients(
                     zip(gradients, v), global_step=global_step)
         
         self.loss_sum = tf.summary.scalar('loss', self.loss)
+        #self.gradient_sum = tf.summary.histogram('gradient', gradients)
 
 if __name__ =='__main__':
     PATH = "/home/stud/wangc/lab/record/"
@@ -79,12 +82,12 @@ if __name__ =='__main__':
     data = data.reshape(data.shape[0],data.shape[1],-1)
     maxtime = data.shape[0]
     desired = data.shape[2]
-    hidden_num = 1000
+    hidden_num = 2500
     batch_size = 50
     train_size = 9000
     val_size = 500
     test_size = 500
-    epoch = 50
+    epoch = 200 
     steps = int(train_size/batch_size)
     val_steps = int(val_size/batch_size)
     test_steps = int(test_size/batch_size)
@@ -92,19 +95,27 @@ if __name__ =='__main__':
     test_start = val_start + val_size
 
     inputs = tf.placeholder(tf.float32, shape = [maxtime, batch_size, desired], name='inputs')
-    ae = Autoencoder(inputs, hidden_num)
-    print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s" % (hidden_num, batch_size, epoch, ae.optimizer, ae.enc_cell), file=f)
+
+    rmsOpti = tf.train.RMSPropOptimizer(0.001)
+    ae = Autoencoder(inputs, hidden_num, optimizer=rmsOpti, conditioned=True)
+    #ae = Autoencoder(inputs, hidden_num)
+    print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, learning rate %f, condtioned %s"
+                     % (hidden_num, batch_size, epoch, ae.optimizer, ae.enc_cell, 0.001, ae.conditioned), file=f)
+    #print("clip by value", file=f)
     f.flush()
 
     with tf.Session() as sess:
         tf.global_variables_initializer().run()
         train_writer = tf.summary.FileWriter(PATH + 'logdir'+'/train', sess.graph)
         validate_writer = tf.summary.FileWriter(PATH + 'logdir'+'/validate', sess.graph) 
+        #gradient_writer = tf.summary.FileWriter(PATH + 'logdir'+'/gradient', sess.graph) 
 
         for j in range(epoch):
             for i in range(steps):
-                _, train_sum = sess.run([ae.train, ae.loss_sum], feed_dict={inputs:(data[:,i*batch_size:(i+1)*batch_size])})
+                _, train_sum = sess.run([ae.train, ae.loss_sum], 
+                                                feed_dict={inputs:(data[:,i*batch_size:(i+1)*batch_size])})
             train_writer.add_summary(train_sum, j)
+            #gradient_writer.add_summary(gradient_sum, j)
             
             val_loss_sum = 0
             for p in range(val_steps): 

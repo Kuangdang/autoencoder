@@ -1,4 +1,6 @@
-#block(name=block-1, threads=10, memory=10240, subtasks=1, gpus=1, hours=24)
+#!/bin/bash
+export N_SUBTASKS=1
+export SUBTASK_ID=1
 FIRST=0
 IFS=',| '
 while read index used mem
