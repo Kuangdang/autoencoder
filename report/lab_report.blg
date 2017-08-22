@@ -4,9 +4,10 @@ The top-level auxiliary file: lab_report.aux
 A level-1 auxiliary file: titlepage.aux
 The style file: alpha.bst
 Database file #1: lab_report.bib
+Warning--I didn't find a database entry for "fig:autoencoder"
 You've used 3 entries,
             2543 wiz_defined-function locations,
-            574 strings with 5240 characters,
+            575 strings with 5255 characters,
 and the built_in function-call counts, 1689 in all, are:
 = -- 162
 > -- 100
@@ -45,3 +46,4 @@ warning$ -- 0
 while$ -- 15
 width$ -- 5
 write$ -- 42
+(There was 1 warning)

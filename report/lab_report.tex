@@ -85,12 +85,14 @@ representation to reconstruct the input sequences. In order to capture spatiotem
 % +++++++++++++++++++++++++
 
 \section{Introduction}
-Understanding temporal sequences is important for solving many problems, such as speech recognition, caption generation. Srivastava
-\emph{et al.} use the LSTM Encoder-Decoder framework to learn video representations \cite{ulvr}. A sequence of frames are fed in encoder 
-LSTM to generate a representation. This representation is then decoded through another LSTM to produce a target sequence. Srivastava
-\emph{et al.} consider two choices of the target. One choice is to use the inputs as the target sequence. The other is to predict the
-future frames. They also evaluate on two kinds of inputs. One is image patches, the other is the high-level "percepts" extracted by
-applying a convolutional net.
+Understanding temporal sequences is important for solving many problems, such as speech recognition, caption generation. Sutksever
+\emph{et al.} described a general sequence to sequence learning framework in which a recurrent network is used to encode a sequence into
+a fixed representation, and then another recurrent network is uded to decode the representation into a sequence \cite{s2s}.
+Srivastava \emph{et al.} use the LSTM Encoder-Decoder framework extending the general framework to learn video representations \cite{ulvr}.
+A sequence of frames are fed in encoder LSTM to generate a representation. This representation is then decoded through another LSTM to 
+produce a target sequence. Srivastava \emph{et al.} consider two choices of the target. One choice is to use the inputs as the target 
+sequence. The other is to predict the future frames. They also evaluate on two kinds of inputs. One is image patches, the other is the 
+high-level "percepts" extracted by applying a convolutional net.
 
 LSTM is an important part of Encoder-Decoder framework. LSTM is a specical kind of recurrent neural network, which can capture long-term
 temporal dependencies without suffering from the optimization problems such as gradient vanishing. In order to make use of frame structure,
@@ -100,7 +102,8 @@ convolutional LSTM introduced in \cite{convlstm} is applied in Encoder-Decoder f
 \subsection{LSTM architecture}
 As mentioned above, Encoder-Decoder framework is composed of LSTMs. We'll introduce vanilla LSTM architecture \cite{odyssey}. A schematic
 of the vanilla LSTM block is illustrated in figure \ref{fig:vanilla}. The key to LSTMs is the cell state, which is controlled by three
-kinds of gates, adding information to or removing it from the cell state. The gates are composed of a sigmoid layer and a pointwise
+kinds of gates, namely input gates, forget gates, output gates, adding information to or removing it from the cell state. 
+The gates are composed of a sigmoid layer and a pointwise
 multiplication operation. The output of sigmoid layer ranges from zero to one, describing how much of each component should be let through.
 The forgate gate decides what information is going to be throwed away from the cell state. The input gate decides what information is going
 to be stored in the cell state. The output gate decides what is going to output.
@@ -112,14 +115,45 @@ to be stored in the cell state. The output gate decides what is going to output.
 \end{figure}
 
 The vector formulas for a vanilla LSTM layer forward pass are given below. $\bm{x}^t$ is the input vector at time t, the $\bm{W}$ are 
-rectangular input weight matrices, the $\bm{p}$ are peephole weight vectors and $\bm{b}$ are bias vectors. Functions $\sigma$, $g$ and 
-$h$ are pointwise nonlinear activation functions. The pointwise multiplication of two vectors is denoted with $\odot$:
+rectangular input weight matrices, the $\bm{p}$ are peephole weight vectors and $\bm{b}$ are bias vectors. Using peephole connections, 
+the gate layers can look at the cell state. Functions $\sigma$, $g$ and 
+$h$ are pointwise nonlinear activation functions. $\mathbf{i}$, $\mathbf{f}$, $\mathbf{o}$ are separately input gate, forget gate, and
+output gate. The pointwise multiplication of two vectors is denoted with $\odot$:
+
+\begin{align*}
+    \mathbf{z}^t &= g(\mathbf{W}_z\mathbf{x}^t + \mathbf{R}_z\mathbf{y}^{t-1} + \mathbf{b}_z) \\
+    \mathbf{i}^t &= \sigma(\mathbf{W}_i\mathbf{x}^t + \mathbf{R}_i\mathbf{y}^{t-1} + \mathbf{p}_i\odot\mathbf{c}^{t-1}+ \mathbf{b}_i) \\
+    \mathbf{f}^t &= \sigma(\mathbf{W}_f\mathbf{x}^t + \mathbf{R}_f\mathbf{y}^{t-1} + \mathbf{p}_f\odot\mathbf{c}^{t-1}+ \mathbf{b}_f) \\
+    \mathbf{c}^t &= \mathbf{i}^t\odot\mathbf{z}^t + \mathbf{f}^t\odot\mathbf{c}^{t-1} \\
+    \mathbf{o}^t &= \sigma(\mathbf{W}_o\mathbf{x}^t + \mathbf{R}_o\mathbf{y}^{t-1} + \mathbf{p}_o\odot\mathbf{c}^{t-1}+ \mathbf{b}_o) \\
+    \mathbf{y}^t &= \mathbf{o}^t \odot h(\mathbf{c}^t) \\
+\end{align*}
+
+As pointed out by Srivastava \emph{et al.}, the key advantage of using LSTM unit over a traditional neuron in an RNN is that the cell state
+in an LSTM unit sums activities over time. This is also the reason why LSTM unit don't suffer from gradient vanishing problem. Since
+derivatives distribute over sums, the error derivatives don't vanish too quickly as they get sent back into time.
 
 \subsection{Convolutional LSTM}
 Video frames have spatio information in their structure, which is not captured by FC-LSTM, where full connections are used in
-input-to-state and state-to-state transitions. To make use of saptio information, ConvLSTM is applied in this lab. In the ConvLSTM, the
+input-to-state and state-to-state transitions. Because of full connections in FC-LSTM, it contains too much redundancy for spatial data
+To make use of spatial information, ConvLSTM is applied in this lab. In the ConvLSTM, the
 inputs $\bm{X}_1,...\bm{X}_t$, cell outputs $\bm{C}_1,...\bm{C}_t$, hidden states $\bm{H}_1,...\bm{H}_t$, and gates $i_t,f_t,o_t$ are 3D
-tensors whose last two dimensions are spatial dimensions (rows and columns). 
+tensors whose last two dimensions are spatial dimensions (rows and columns). The ConvLSTM determines the future state of a certain cell
+by the inputs and past states of its neighbors, using a convolutional operator in state-to-state and input-to-state transitions. The key
+equations are given below, where '$\ast$' denotes the convolutional operator and '$\odot$' denotes the Hadamard product:
+
+\begin{align*}
+    \mathbf{i}_t &= \sigma(\mathbf{W}_{xi} \ast \mathbf{X}_t + 
+                        \mathbf{W}_{hi} \ast \mathbf{H}_{t-1} + \mathbf{W}_{ci} \odot \mathbf{C}_{t-1}+ \mathbf{b}_i) \\
+    \mathbf{f}_t &= \sigma(\mathbf{W}_{xf} \ast \mathbf{X}_t + 
+                        \mathbf{W}_{hf} \ast \mathbf{H}_{t-1} + \mathbf{W}_{cf} \odot \mathbf{C}_{t-1}+ \mathbf{b}_f) \\
+    \mathbf{C}_t &= \mathbf{f}_t \odot \mathbf{C}_{t-1} + \mathbf{i}_t \odot tanh(\mathbf{W}_{xc} \ast \mathbf{X}_t +
+                        \mathbf{W}_{hc} \ast \mathbf{H}_{t-1} + \mathbf{b}_c) \\
+    \mathbf{o}_t &= \sigma(\mathbf{W}_{xo}\ast\mathbf{X}_t + 
+                        \mathbf{W}_{ho}\ast\mathbf{H}_{t-1} + \mathbf{W}_{co}\odot\mathbf{C}_{t-1}+ \mathbf{b}_o) \\
+    \mathbf{H}_t &= \mathbf{o}_t \odot tanh(\mathbf{C}_t) \\
+\end{align*}
+
 
 \begin{figure}[ht!]
     \includegraphics[width=\linewidth]{convlstm}
@@ -129,24 +163,39 @@ tensors whose last two dimensions are spatial dimensions (rows and columns).
 \end{figure}
 
 \subsection{LSTM autoencoder model}
-This model is composed of two Recurrent Neural Network, the encoder LSTM and the decoder LSTM, as shown in figure \cite{fig:autoencoder}.
-The input to the model is a sequence of vectors, in our case, video frames. The encoder LSTM runs through these frames to come up with a
-representation, which is the state of encoder LSTM atfer the last frame has been read. The decoder LSTM then is expected to reconstruct
-target seqence as input sequence based on the representation， which requires that representation contains information about the
-appearance of the objects and the background as well as any motion in the video. Srivastava \emph{et al.} point out that it makes
-optimization easier when target seqence is reversed compared to input sequence, because the model can look at low range correlation. 
-
 \begin{figure}[ht!]
     \includegraphics[width=\linewidth]{autoencoder}
     \caption{LSTM Autoencoder Model}
     \caption*{Source: adopted from slides of Kaiming He}
-    \label{fig:autoencoder}
+    \label{fig:encoder}
 \end{figure}
 
+This model is composed of two Recurrent Neural Network, the encoder LSTM and the decoder LSTM, as shown in figure \ref{fig:encoder}.
+The input to the model is a sequence of vectors, in our case, video frames. The encoder LSTM runs through these frames to come up with a
+representation, which is the state of encoder LSTM atfer the last frame has been read. The decoder LSTM then is expected to reconstruct
+target seqence as input sequence based on the representation, which requires that representation contains information about the
+appearance of the objects and the background as well as any motion in the video. Srivastava \emph{et al.} point out that it makes
+optimization easier when target seqence is reversed compared to input sequence, because the model can look at low range correlation. 
+
+The model has two different design, one in which the decoder LSTM is contioned on the last generated frame and the other in which it is
+not. In other word, A conditional decoder receives the last generated output frame as input, the dotted boxes in figure 
+\ref{fig:encoder} are present.
+
 \section{Experiments}
+In this lab, experiments are performed to achieve the following objects:
+
+compare the performance of conditional decoder and unconditioned decoder.
+
+check how hyperparameters affect the autoencoder model
+
+compare FC-LSTM and ConvLSTM 
+
+check my implementation of FC-LSTM and ConvLSTM
 \subsection{Datasets}
 The model is trained on a dataset of moving MNIST digits. Each video is 20 frames long and consist of 2 digits moving inside $64\times64$
-patch.
+patch. The moving digits are chosen randomly from the MNIST dataset and placed initially at random locations inside patch. Each digit is
+assigned a velocity with random direction on a unit circle and uniformly random magnitude over a fixed range. The digits bounce off the 
+edges of the frame and overlap if they are at the same location.
 
 
 
