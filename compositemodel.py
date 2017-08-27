@@ -17,11 +17,14 @@ class Autoencoder:
         if enc_cell is None:
             self.enc_cell = tf.contrib.rnn.LSTMCell(self.hidden_num,
                                                     use_peepholes=True, num_proj=desired)
-            self.dec_cell = tf.contrib.rnn.LSTMCell(self.hidden_num,
+            self.dec_reconstruct_cell = tf.contrib.rnn.LSTMCell(self.hidden_num,
+                                                    use_peepholes=True, num_proj=desired)
+            self.dec_predict_cell = tf.contrib.rnn.LSTMCell(self.hidden_num,
                                                     use_peepholes=True, num_proj=desired)
         else:
             self.enc_cell = enc_cell
-            self.dec_cell = dec_cell
+            self.dec_reconstruct_cell = dec_cell
+            self.dec_predict_cell = dec_cell
 
         with tf.variable_scope('encode', reuse=None):
             _, enc_state = tf.nn.dynamic_rnn(self.enc_cell,
@@ -50,12 +53,12 @@ class Autoencoder:
             for _ in range(predict_frames):
                 with tf.variable_scope('unrolling', reuse=v):
                     if conditioned is None:
-                        predict_output, dec_predict_state = self.dec_cell(dec_predict_inputs, dec_predict_state)
+                        predict_output, dec_predict_state = self.dec_predict_cell(dec_predict_inputs, dec_predict_state)
                     else:
                         if v is None:
-                            predict_output, dec_predict_state = self.dec_cell(dec_predict_inputs, dec_predict_state)
+                            predict_output, dec_predict_state = self.dec_predict_cell(dec_predict_inputs, dec_predict_state)
                         else:
-                            predict_output, dec_predict_state = self.dec_cell(predict_output, dec_predict_state)
+                            predict_output, dec_predict_state = self.dec_predict_cell(predict_output, dec_predict_state)
 
                     v = True
                     predict_outputs.append(predict_output)
@@ -67,12 +70,15 @@ class Autoencoder:
             for _ in range(input_frames):
                 with tf.variable_scope('unrolling', reuse=v):
                     if conditioned is None:
-                        reconstruct_output, dec_reconstruct_state = self.dec_cell(dec_reconstruct_inputs, dec_reconstruct_state)
+                        reconstruct_output, dec_reconstruct_state = self.dec_reconstruct_cell(dec_reconstruct_inputs,
+                                                                                              dec_reconstruct_state)
                     else:
                         if v is None:
-                            reconstruct_output, dec_reconstruct_state = self.dec_cell(dec_reconstruct_inputs, dec_reconstruct_state)
+                            reconstruct_output, dec_reconstruct_state = self.dec_reconstruct_cell(dec_reconstruct_inputs,
+                                                                                                  dec_reconstruct_state)
                         else:
-                            reconstruct_output, dec_reconstruct_state = self.dec_cell(reconstruct_output, dec_reconstruct_state)
+                            reconstruct_output, dec_reconstruct_state = self.dec_reconstruct_cell(reconstruct_output,
+                                                                                                  dec_reconstruct_state)
 
                     v = True
                     reconstruct_outputs.append(reconstruct_output)
