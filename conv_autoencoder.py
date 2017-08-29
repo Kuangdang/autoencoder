@@ -1,7 +1,8 @@
+import sys
 import numpy as np
 import tensorflow as tf
-import sys
 from custom_cell import ConvLSTMCell
+from tools import normalizedata
 
 #autoencoder class
 class Autoencoder:
@@ -11,9 +12,9 @@ class Autoencoder:
         '''
         maxtime = inputs.get_shape().as_list()[0]
         batch_size = inputs.get_shape().as_list()[1]
-        in_h  = inputs.get_shape().as_list()[2]
-        in_w  = inputs.get_shape().as_list()[3]
-        channels  = inputs.get_shape().as_list()[4]
+        in_h = inputs.get_shape().as_list()[2]
+        in_w = inputs.get_shape().as_list()[3]
+        channels = inputs.get_shape().as_list()[4]
 
         
         self.hidden_num = enc_cell._num_units
@@ -71,12 +72,14 @@ class Autoencoder:
         
         self.loss_sum = tf.summary.scalar('loss', self.loss)
 
-if __name__ =='__main__':
+if __name__ == '__main__':
     PATH = "/home/stud/wangc/lab/record/"
     DATASET = "/home/stud/wangc/lab/mnist_test_seq.npy"
     f = open(PATH + "log", "w+") 
     data = np.load(DATASET)
     data = np.around(data/255, decimals=5)
+    #data = normalizedata(data)
+    #data = np.around(data, decimals=5)
     data = data.reshape(data.shape[0], data.shape[1], data.shape[2], data.shape[3], 1)
     maxtime = data.shape[0]
     in_h = data.shape[2]
@@ -133,7 +136,7 @@ if __name__ =='__main__':
         print("test error %f" % average_test, file=f)
 
         np.savez_compressed(PATH + "outputs",
-                test_out=test_outputs, test_in=data[:,-batch_size:-1])
+                test_out=test_outputs, test_in=data[:,-batch_size:])
      
     f.close()
     sys.exit(0)

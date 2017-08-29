@@ -9,5 +9,5 @@ def normalizedata(data):
 def denormdata(data):
     max_e = np.amax(data)
     min_e = np.amin(data)
-    norm = 255 * (data -min_e)/(max_e -min_e)
+    norm = 255 * (data - min_e)/(max_e - min_e)
     return norm

@@ -70,9 +70,9 @@
 % Insert your Abstract here
 % +++++++++++++++++++++++++
 In this lab, Long Short Term Memory (LSTM) networks are used to learn the representation of video sequences. It adpots the Encoder-Decoder
-framework. An encoder LSTM is used to map the inputs sequences to a fixed length representation. Then an decoder LSTM decodes this
-representation to reconstruct the input sequences. In order to capture spatiotemporal correlation better, the convolutional LSTM
-(ConvLSTM) is applied besides fully-connected LSTM (FC-LSTM).
+framework. An encoder LSTM is used to map the input sequences to a fixed length representation. Then an decoder LSTM decodes this
+representation to reconstruct the input sequences or to predict the future sequences. In order to capture spatiotemporal correlation
+better, the convolutional LSTM (ConvLSTM) is applied besides fully-connected LSTM (FC-LSTM).
 
 \end{abstract}
 
@@ -87,12 +87,13 @@ representation to reconstruct the input sequences. In order to capture spatiotem
 \section{Introduction}
 Understanding temporal sequences is important for solving many problems, such as speech recognition, caption generation. Sutksever
 \emph{et al.} described a general sequence to sequence learning framework in which a recurrent network is used to encode a sequence into
-a fixed representation, and then another recurrent network is uded to decode the representation into a sequence \cite{s2s}.
-Srivastava \emph{et al.} use the LSTM Encoder-Decoder framework extending the general framework to learn video representations \cite{ulvr}.
+a fixed representation, and then another recurrent network is used to decode the representation into a sequence \cite{s2s}.
+Srivastava \emph{et al.} use the LSTM Encoder-Decoder framework which extends the general framework to learn video representations
+\cite{ulvr}.
 A sequence of frames are fed in encoder LSTM to generate a representation. This representation is then decoded through another LSTM to 
 produce a target sequence. Srivastava \emph{et al.} consider two choices of the target. One choice is to use the inputs as the target 
 sequence. The other is to predict the future frames. They also evaluate on two kinds of inputs. One is image patches, the other is the 
-high-level "percepts" extracted by applying a convolutional net.
+high-level "percepts" extracted by applying a convolutional net. In this lab, we only use image patches as the inputs.
 
 LSTM is an important part of Encoder-Decoder framework. LSTM is a specical kind of recurrent neural network, which can capture long-term
 temporal dependencies without suffering from the optimization problems such as gradient vanishing. In order to make use of frame structure,
@@ -116,9 +117,9 @@ to be stored in the cell state. The output gate decides what is going to output.
 
 The vector formulas for a vanilla LSTM layer forward pass are given below. $\bm{x}^t$ is the input vector at time t, the $\bm{W}$ are 
 rectangular input weight matrices, the $\bm{p}$ are peephole weight vectors and $\bm{b}$ are bias vectors. Using peephole connections, 
-the gate layers can look at the cell state. Functions $\sigma$, $g$ and 
-$h$ are pointwise nonlinear activation functions. $\mathbf{i}$, $\mathbf{f}$, $\mathbf{o}$ are separately input gate, forget gate, and
-output gate. The pointwise multiplication of two vectors is denoted with $\odot$:
+the gate layers can look at the cell state. The peephole connections are drawed as the blue lines in figure \ref{fig:vanilla}.
+Functions $\sigma$, $g$ and  $h$ are pointwise nonlinear activation functions. $\mathbf{i}$, $\mathbf{f}$, $\mathbf{o}$ are separately
+input gate, forget gate, and output gate. The pointwise multiplication of two vectors is denoted with $\odot$:
 
 \begin{align*}
     \mathbf{z}^t &= g(\mathbf{W}_z\mathbf{x}^t + \mathbf{R}_z\mathbf{y}^{t-1} + \mathbf{b}_z) \\
@@ -134,13 +135,17 @@ in an LSTM unit sums activities over time. This is also the reason why LSTM unit
 derivatives distribute over sums, the error derivatives don't vanish too quickly as they get sent back into time.
 
 \subsection{Convolutional LSTM}
+While traditional multilayer perceptron (MLP) models were to some degree successfully used for image recognition, the appearance of
+convolutional neural network (CNN) has made a prominent improvement in many areas such as image recognition, object detection and image
+segmentation. The convolutional layer is the core building block of a CNN. With this inspiration, it's straightforward to think of making
+the core building block of Encoder-Decoder framework convolutional.
 Video frames have spatio information in their structure, which is not captured by FC-LSTM, where full connections are used in
 input-to-state and state-to-state transitions. Because of full connections in FC-LSTM, it contains too much redundancy for spatial data
 To make use of spatial information, ConvLSTM is applied in this lab. In the ConvLSTM, the
 inputs $\bm{X}_1,...\bm{X}_t$, cell outputs $\bm{C}_1,...\bm{C}_t$, hidden states $\bm{H}_1,...\bm{H}_t$, and gates $i_t,f_t,o_t$ are 3D
 tensors whose last two dimensions are spatial dimensions (rows and columns). The ConvLSTM determines the future state of a certain cell
 by the inputs and past states of its neighbors, using a convolutional operator in state-to-state and input-to-state transitions. The key
-equations are given below, where '$\ast$' denotes the convolutional operator and '$\odot$' denotes the Hadamard product:
+equations are given below, where $\ast$ denotes the convolutional operator and $\odot$ denotes the Hadamard product:
 
 \begin{align*}
     \mathbf{i}_t &= \sigma(\mathbf{W}_{xi} \ast \mathbf{X}_t + 
@@ -197,7 +202,34 @@ patch. The moving digits are chosen randomly from the MNIST dataset and placed i
 assigned a velocity with random direction on a unit circle and uniformly random magnitude over a fixed range. The digits bounce off the 
 edges of the frame and overlap if they are at the same location.
 
+\subsection{comparision of several complexity}
+In this section, we'll compare the perfermance of fully-connected LSTM autoencoder with different LSTM units, which means that they have
+different model capability. Models are trained using RMSProp optimizer with initial learning rate at 0.0001. We'll talk more about the
+choose of optimizers later.
 
+\begin{table}[h!]
+\centering
+\begin{tabular}{ c c } 
+    \hline
+    LSTM units & MSE \\
+    \hline
+    500 & 0.027440 \\
+    1500 & 0.025928 \\
+    2500 & 0.019883 \\
+    \hline
+    \end{tabular}
+    \caption{summary of results with different units}
+\label{table:units}
+\end{table}
+
+\begin{figure}[ht!]
+    \includegraphics[width=\linewidth]{fc-builtin-2500-200}
+    \caption{reconstruction of different model capability}
+    \caption*{Source: adopted from slides of Kaiming He}
+    \label{fig:units}
+\end{figure}
+
+\subsection{comparision between fully-connected and convolutional LSTM}
 
 % =========================================================================
 \bibliographystyle{alpha}
