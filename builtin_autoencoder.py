@@ -82,8 +82,8 @@ if __name__ == '__main__':
     DATASET = "/home/stud/wangc/lab/mnist_test_seq.npy"
     f = open(PATH + "log", "w+")
     data = np.load(DATASET)
-    #data = np.around(data/255, decimals=5)
-    data = normalizedata(data)
+    data = np.around(data/255, decimals=5)
+    #data = normalizedata(data)
     data = data.reshape(data.shape[0], data.shape[1], -1)
     maxtime = data.shape[0]
     desired = data.shape[2]
