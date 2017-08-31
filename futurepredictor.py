@@ -88,11 +88,11 @@ if __name__ == '__main__':
     predict_frames = targets_data.shape[0]
     desired = inputs_data.shape[2]
     hidden_num = 2500
-    batch_size = 50
+    batch_size = 10
     train_size = 9000
     val_size = 500
     test_size = 500
-    epoch = 200
+    epoch = 350
     steps = int(train_size/batch_size)
     val_steps = int(val_size/batch_size)
     test_steps = int(test_size/batch_size)
@@ -146,7 +146,7 @@ if __name__ == '__main__':
         print("test error %f" % average_test, file=f)
 
         np.savez_compressed(PATH + "outputs",
-                            test_out=test_outputs, test_in=inputs_data[:, -batch_size:-1])
+                            test_out=test_outputs, test_in=data[10:, -batch_size:])
 
     f.close()
     sys.exit(0)

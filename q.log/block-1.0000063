@@ -1,0 +1,31 @@
+---------------- start ----------------
+Thu Aug 31 2017 13:57:04
+max threads: 10
+max memory: 10240 MB
+time limit: 24 hours
+gpu id(s): 1
+---------------------------------------
+passed parameters: onthefly_autoencoder.py
+0
+2017-08-31 13:57:10.366159: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+2017-08-31 13:57:10.366180: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+2017-08-31 13:57:10.366184: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+2017-08-31 13:57:10.366188: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
+2017-08-31 13:57:10.366191: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use FMA instructions, but these are available on your machine and could speed up CPU computations.
+2017-08-31 13:57:10.390565: E tensorflow/core/common_runtime/direct_session.cc:137] Internal: failed initializing StreamExecutor for CUDA device ordinal 0: Internal: failed call to cuDevicePrimaryCtxRetain: CUDA_ERROR_INVALID_DEVICE
+]0;IPython: lab/autoencoderTraceback (most recent call last):
+  File "onthefly_autoencoder.py", line 109, in <module>
+    with tf.Session() as sess:
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.6/site-packages/tensorflow/python/client/session.py", line 1193, in __init__
+    super(Session, self).__init__(target, graph, config=config)
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.6/site-packages/tensorflow/python/client/session.py", line 554, in __init__
+    self._session = tf_session.TF_NewDeprecatedSession(opts, status)
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.6/contextlib.py", line 89, in __exit__
+    next(self.gen)
+  File "/home/wangc/miniconda3/envs/tensorflow/lib/python3.6/site-packages/tensorflow/python/framework/errors_impl.py", line 466, in raise_exception_on_not_ok_status
+    pywrap_tensorflow.TF_GetCode(status))
+tensorflow.python.framework.errors_impl.InternalError: Failed to create session.
+----------------- end -----------------
+Thu Aug 31 2017 13:57:10
+elapsed time: 000:00:06
+---------------------------------------

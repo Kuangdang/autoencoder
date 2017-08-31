@@ -124,7 +124,7 @@ if __name__ == '__main__':
     input_frames = inputs_data.shape[0]
     predict_frames = targets_data.shape[0]
     desired = inputs_data.shape[2]
-    hidden_num = 2500
+    hidden_num = 1500
     batch_size = 50
     train_size = 9000
     val_size = 500
@@ -184,7 +184,7 @@ if __name__ == '__main__':
 
         np.savez_compressed(PATH + "outputs",
                             test_predict_output=test_predict_outputs, test_reconstruct_output= test_reconstruct_outputs,
-                            test_in=inputs_data[:, -batch_size:-1])
+                            test_in=data[:, -batch_size:])
 
     f.close()
     sys.exit(0)
