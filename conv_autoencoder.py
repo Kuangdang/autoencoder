@@ -74,26 +74,23 @@ class Autoencoder:
 
 if __name__ == '__main__':
     PATH = "/home/stud/wangc/lab/record/"
-    DATASET = "/home/stud/wangc/lab/mnist_test_seq.npy"
+    DATASET = "../mnist.h5"
     f = open(PATH + "log", "w+") 
-    data = np.load(DATASET)
-    data = np.around(data/255, decimals=5)
+    #data = np.load(DATASET)
+    #data = np.around(data/255, decimals=5)
     #data = normalizedata(data)
     #data = np.around(data, decimals=5)
-    data = data.reshape(data.shape[0], data.shape[1], data.shape[2], data.shape[3], 1)
-    maxtime = data.shape[0]
-    in_h = data.shape[2]
-    in_w = data.shape[3]
-    batch_size = 50
-    train_size = 9000
-    val_size = 500
-    test_size = 500
+    #data = data.reshape(data.shape[0], data.shape[1], data.shape[2], data.shape[3], 1)
+    maxtime = 20
+    in_h = 64
+    in_w = 64
+    batch_size = 30
+    data_generator = DataHandler(DATASET, num_frames=maxtime, batch_size=batch_size)
+
     epoch = 300
-    steps = int(train_size/batch_size)
-    val_steps = int(val_size/batch_size)
-    test_steps = int(test_size/batch_size)
-    val_start = train_size
-    test_start = val_start + val_size
+    steps = 500
+    val_steps = 50
+    test_steps = 50
 
     enc_cell = ConvLSTMCell(30, (in_h, in_w), [8,8], 1)
     dec_cell = ConvLSTMCell(30, (in_h, in_w), [8,8], 1)
@@ -101,7 +98,7 @@ if __name__ == '__main__':
     inputs = tf.placeholder(tf.float32, shape = [maxtime, batch_size, in_h, in_w, 1], name='inputs')
 
     rmsOpti = tf.train.RMSPropOptimizer(0.0001)
-    ae = Autoencoder(inputs, enc_cell=enc_cell, dec_cell=dec_cell, optimizer=rmsOpti, conditioned=True) 
+    ae = Autoencoder(inputs, enc_cell=enc_cell, dec_cell=dec_cell, optimizer=rmsOpti, conditioned=False) 
     #ae = Autoencoder(inputs, enc_cell=enc_cell, dec_cell=dec_cell)
     print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, conditioned" 
             % (ae.enc_cell._num_units, batch_size, epoch, ae.optimizer, ae.enc_cell), file=f)
@@ -114,29 +111,30 @@ if __name__ == '__main__':
                 PATH + 'logdir'+'/validate', sess.graph) 
         for j in range(epoch):
             for i in range(steps):
-                _, train_sum = sess.run([ae.train, ae.loss_sum], feed_dict={inputs:(data[:,i*batch_size:(i+1)*batch_size])})
+                _, train_sum = sess.run([ae.train, ae.loss_sum],
+                                        feed_dict={inputs:data_generator.get_batch().reshape(maxtime, batch_size, in_h, in_w, 1)})
             train_writer.add_summary(train_sum, j)
 
             val_loss_sum = 0
             for p in range(val_steps): 
                 _, val_sum, val_loss = sess.run([ae.outputs, ae.loss_sum, ae.loss],
-                        feed_dict={inputs:(data[:,val_start+p*batch_size:val_start+(p+1)*batch_size])})
+                                        feed_dict={inputs:data_generator.get_batch().reshape(maxtime, batch_size, in_h, in_w, 1)})
                 val_loss_sum += val_loss
             val_avrg = val_loss_sum/val_steps
-            val_summa = tf.Summary(value=[
-                tf.Summary.Value(tag="loss", simple_value=val_avrg),])
+            val_summa = tf.Summary(value=[tf.Summary.Value(tag="loss", simple_value=val_avrg),])
             validate_writer.add_summary(val_summa, j)
 
         test_sum = 0
         for k in range(test_steps):
+            test_ins = data_generator.get_batch().reshape(maxtime, batch_size, in_h, in_w, 1)
             test_outputs, test_l = sess.run([ae.outputs, ae.loss], 
-                    feed_dict={inputs:data[:,test_start+k*batch_size:test_start+(k+1)*batch_size]})
+                                        feed_dict={inputs:test_ins})
             test_sum += test_l 
         average_test = test_sum/test_steps
         print("test error %f" % average_test, file=f)
 
         np.savez_compressed(PATH + "outputs",
-                test_out=test_outputs, test_in=data[:,-batch_size:])
+                test_out=test_outputs, test_in=test_ins)
      
     f.close()
     sys.exit(0)

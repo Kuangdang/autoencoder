@@ -22,4 +22,11 @@ Nitish Srivastava, Elman Mansimov, and Ruslan Salakhutdinov.
 \newblock In {\em Proceedings of the 32nd International Conference on Machine
   Learning, {ICML} 2015, Lille, France, 6-11 July 2015}, pages 843--852, 2015.
 
+\bibitem[SVL14]{s2s}
+Ilya Sutskever, Oriol Vinyals, and Quoc~V. Le.
+\newblock Sequence to sequence learning with neural networks.
+\newblock In {\em Advances in Neural Information Processing Systems 27: Annual
+  Conference on Neural Information Processing Systems 2014, December 8-13 2014,
+  Montreal, Quebec, Canada}, pages 3104--3112, 2014.
+
 \end{thebibliography}

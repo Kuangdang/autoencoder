@@ -3,7 +3,9 @@
 \contentsline {subsection}{\numberline {2.1}LSTM architecture}{3}
 \contentsline {subsection}{\numberline {2.2}Convolutional LSTM}{4}
 \contentsline {subsection}{\numberline {2.3}LSTM autoencoder model}{5}
+\contentsline {subsection}{\numberline {2.4}LSTM future predictor model}{5}
+\contentsline {subsection}{\numberline {2.5}A composite model}{6}
 \contentsline {section}{\numberline {3}Experiments}{6}
 \contentsline {subsection}{\numberline {3.1}Datasets}{6}
 \contentsline {subsection}{\numberline {3.2}comparision of several complexity}{6}
-\contentsline {subsection}{\numberline {3.3}comparision between fully-connected and convolutional LSTM}{6}
+\contentsline {subsection}{\numberline {3.3}comparision between fully-connected and convolutional LSTM}{8}
