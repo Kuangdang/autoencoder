@@ -77,37 +77,32 @@ class Autoencoder:
 
 if __name__ == '__main__':
     PATH = "/home/stud/wangc/lab/record/"
-    DATASET = "/home/stud/wangc/lab/mnist_test_seq.npy"
+    DATASET = "../mnist.h5"
     f = open(PATH + "log", "w+")
-    data = np.load(DATASET)
-    data = normalizedata(data)
-    data = data.reshape(data.shape[0], data.shape[1], -1)
-    inputs_data = data[0:10]
-    targets_data = data[10:20]
-    input_frames = inputs_data.shape[0]
-    predict_frames = targets_data.shape[0]
-    desired = inputs_data.shape[2]
-    hidden_num = 2500
-    batch_size = 10
-    train_size = 9000
-    val_size = 500
-    test_size = 500
-    epoch = 350
-    steps = int(train_size/batch_size)
-    val_steps = int(val_size/batch_size)
-    test_steps = int(test_size/batch_size)
-    val_start = train_size
-    test_start = val_start + val_size
+    #inputs_data = data[0:10]
+    #targets_data = data[10:20]
+    input_frames = 10
+    predict_frames = 10
+    total_frames = input_frames + predict_frames
+    desired = 64 * 64
+    hidden_num = 1500
+    batch_size = 30
+    data_generator = DataHandler(DATASET, num_frames=total_frames, batch_size=batch_size)
+
+    epoch = 300
+    steps = 500
+    val_steps = 50
+    test_steps = 50
 
     inputs = tf.placeholder(tf.float32, shape=[input_frames, batch_size, desired], name='inputs')
     targets = tf.placeholder(tf.float32, shape=[predict_frames, batch_size, desired], name='targets')
 
-    rmsOpti = tf.train.RMSPropOptimizer(0.0001)
-    ae = Autoencoder(inputs, predict_frames, hidden_num, optimizer=rmsOpti, conditioned=True, targets=targets) 
+    rmsOpti = tf.train.RMSPropOptimizer(0.001)
+    ae = Autoencoder(inputs, predict_frames, hidden_num, optimizer=rmsOpti, conditioned=False, targets=targets) 
     #ae = Autoencoder(inputs, hidden_num)
     print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, learning rate %f, condtioned %s"
             % (hidden_num, batch_size, epoch,
-               ae.optimizer, ae.enc_cell, 0.0001, ae.conditioned), file=f)
+               ae.optimizer, ae.enc_cell, 0.001, ae.conditioned), file=f)
     #print("clip by value", file=f)
     f.flush()
 
@@ -119,17 +114,17 @@ if __name__ == '__main__':
 
         for j in range(epoch):
             for i in range(steps):
+                data = data_generator.get_batch().reshape(total_frames, batch_size, -1)
                 _, train_sum = sess.run([ae.train, ae.loss_sum],
-                                        feed_dict={inputs:inputs_data[:, i*batch_size:(i+1)*batch_size],
-                                                    targets:targets_data[:, i*batch_size:(i+1)*batch_size]})
+                                        feed_dict={inputs:data[:10], targets:data[10:]})
             train_writer.add_summary(train_sum, j)
             #gradient_writer.add_summary(gradient_sum, j)
 
             val_loss_sum = 0
             for p in range(val_steps):
-                _, val_sum, val_loss = sess.run([ae.outputs, ae.loss_sum, ae.loss],
-                                                feed_dict={inputs:inputs_data[:, val_start+p*batch_size:val_start+(p+1)*batch_size],
-                                                           targets:targets_data[:, val_start+p*batch_size:val_start+(p+1)*batch_size]})
+                data = data_generator.get_batch().reshape(total_frames, batch_size, -1)
+                val_sum, val_loss = sess.run([ae.loss_sum, ae.loss],
+                                                feed_dict={inputs:data[:10], targets:data[10:]})
                 val_loss_sum += val_loss
             val_avrg = val_loss_sum/val_steps
             val_summa = tf.Summary(value=[
@@ -138,15 +133,15 @@ if __name__ == '__main__':
 
         test_sum = 0
         for k in range(test_steps):
+            data = data_generator.get_batch().reshape(total_frames, batch_size, -1)
             test_outputs, test_l = sess.run([ae.outputs, ae.loss],
-                                            feed_dict={inputs:inputs_data[:, test_start+k*batch_size:test_start+(k+1)*batch_size],
-                                                        targets:targets_data[:, test_start+k*batch_size:test_start+(k+1)*batch_size]})
+                                                feed_dict={inputs:data[:10], targets:data[10:]})
             test_sum += test_l
         average_test = test_sum/test_steps
         print("test error %f" % average_test, file=f)
 
         np.savez_compressed(PATH + "outputs",
-                            test_out=test_outputs, test_in=data[10:, -batch_size:])
+                test_out=test_outputs, test_in=data[10:])
 
     f.close()
     sys.exit(0)
