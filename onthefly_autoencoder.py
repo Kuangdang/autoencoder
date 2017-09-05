@@ -76,13 +76,12 @@ class Autoencoder:
             zip(gradients, v), global_step=global_step)
 
         self.loss_sum = tf.summary.scalar('loss', self.loss)
-        #self.gradient_sum = tf.summary.histogram('gradient', gradients)
 
 if __name__ == '__main__':
     PATH = "/home/stud/wangc/lab/record/"
     f = open(PATH + "log", "w+")
     DATASET = "../mnist.h5"
-    #data = data.reshape(data.shape[0], data.shape[1], -1)
+    save_path = "/home/stud/wangc/lab/record/model.ckpt"
     maxtime = 20
     desired = 64 * 64
     hidden_num = 2500
@@ -99,12 +98,11 @@ if __name__ == '__main__':
     rmsOpti = tf.train.RMSPropOptimizer(0.001)
     ae = Autoencoder(inputs, hidden_num, optimizer=rmsOpti,
                      conditioned=False)
-    #ae = Autoencoder(inputs, hidden_num)
     print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, learning rate %f, condtioned %s"
             % (hidden_num, batch_size, epoch,
                ae.optimizer, ae.enc_cell, 0.001, ae.conditioned), file=f)
-    #print("clip by value", file=f)
     f.flush()
+    saver = tf.train.Saver()
 
     with tf.Session() as sess:
         tf.global_variables_initializer().run()
@@ -128,7 +126,8 @@ if __name__ == '__main__':
             val_summa = tf.Summary(value=[
                 tf.Summary.Value(tag="loss", simple_value=val_avrg),])
             validate_writer.add_summary(val_summa, j)
-
+        saver.save(sess, save_path)
+        '''
         test_sum = 0
         for k in range(test_steps):
             test_ins = data_generator.get_batch().reshape(maxtime, batch_size, -1)
@@ -140,6 +139,7 @@ if __name__ == '__main__':
 
         np.savez_compressed(PATH + "outputs",
                             test_out=test_outputs, test_in=test_ins)
+        '''
 
     f.close()
     sys.exit(0)

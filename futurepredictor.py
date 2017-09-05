@@ -79,8 +79,7 @@ if __name__ == '__main__':
     PATH = "/home/stud/wangc/lab/record/"
     DATASET = "../mnist.h5"
     f = open(PATH + "log", "w+")
-    #inputs_data = data[0:10]
-    #targets_data = data[10:20]
+    save_path = "/home/stud/wangc/lab/record/model.ckpt"
     input_frames = 10
     predict_frames = 10
     total_frames = input_frames + predict_frames
@@ -99,12 +98,11 @@ if __name__ == '__main__':
 
     rmsOpti = tf.train.RMSPropOptimizer(0.001)
     ae = Autoencoder(inputs, predict_frames, hidden_num, optimizer=rmsOpti, conditioned=False, targets=targets) 
-    #ae = Autoencoder(inputs, hidden_num)
     print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, learning rate %f, condtioned %s"
             % (hidden_num, batch_size, epoch,
                ae.optimizer, ae.enc_cell, 0.001, ae.conditioned), file=f)
-    #print("clip by value", file=f)
     f.flush()
+    saver = tf.train.Saver()
 
     with tf.Session() as sess:
         tf.global_variables_initializer().run()
@@ -130,7 +128,8 @@ if __name__ == '__main__':
             val_summa = tf.Summary(value=[
                 tf.Summary.Value(tag="loss", simple_value=val_avrg),])
             validate_writer.add_summary(val_summa, j)
-
+        saver.save(sess, save_path)
+        '''
         test_sum = 0
         for k in range(test_steps):
             data = data_generator.get_batch().reshape(total_frames, batch_size, -1)
@@ -142,6 +141,7 @@ if __name__ == '__main__':
 
         np.savez_compressed(PATH + "outputs",
                 test_out=test_outputs, test_in=data[10:])
+        '''
 
     f.close()
     sys.exit(0)
