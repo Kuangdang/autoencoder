@@ -1,9 +1,9 @@
 import sys
 import numpy as np
 import tensorflow as tf
-from tools import normalizedata
+from new_handler import DataHandler
 #autoencoder class
-class Autoencoder:
+class Predictor:
     def __init__(self, inputs, predict_frames, hidden_num, targets=None, enc_cell=None, dec_cell=None, optimizer=None, conditioned=None):
         '''
         inputs shape [input_frames, batch_size, frame_size*frame_size]
@@ -76,10 +76,10 @@ class Autoencoder:
             self.loss_sum = tf.summary.scalar('loss', self.loss)
 
 if __name__ == '__main__':
-    PATH = "/home/stud/wangc/lab/record/"
+    PATH = "/home/wangc/lab/record/"
     DATASET = "../mnist.h5"
     f = open(PATH + "log", "w+")
-    save_path = "/home/stud/wangc/lab/record/model.ckpt"
+    save_path = "/home/wangc/lab/record/model.ckpt"
     input_frames = 10
     predict_frames = 10
     total_frames = input_frames + predict_frames
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     targets = tf.placeholder(tf.float32, shape=[predict_frames, batch_size, desired], name='targets')
 
     rmsOpti = tf.train.RMSPropOptimizer(0.001)
-    ae = Autoencoder(inputs, predict_frames, hidden_num, optimizer=rmsOpti, conditioned=False, targets=targets) 
+    ae = Predictor(inputs, predict_frames, hidden_num, optimizer=rmsOpti, conditioned=False, targets=targets) 
     print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, learning rate %f, condtioned %s"
             % (hidden_num, batch_size, epoch,
                ae.optimizer, ae.enc_cell, 0.001, ae.conditioned), file=f)

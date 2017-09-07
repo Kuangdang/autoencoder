@@ -116,6 +116,7 @@ if __name__ == '__main__':
     PATH = "/home/wangc/lab/record/"
     DATASET = "../mnist.h5"
     f = open(PATH + "log", "w+")
+    save_path = "/home/wangc/lab/record/model.ckpt"
     input_frames = 10
     predict_frames = 10
     total_frames = input_frames + predict_frames
