@@ -135,8 +135,8 @@ if __name__ == '__main__':
 
     rmsOpti = tf.train.RMSPropOptimizer(0.001)
     ae = CompositeModel(inputs, predict_frames, hidden_num, optimizer=rmsOpti, conditioned=False, targets=targets) 
-    print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, learning rate %f, condtioned %s"
-            % (hidden_num, batch_size, epoch,
+    print("class %s, hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, learning rate %f, condtioned %s"
+            % (ae.__name__, hidden_num, batch_size, epoch,
                ae.optimizer, ae.enc_cell, 0.001, ae.conditioned), file=f)
     f.flush()
     saver = tf.train.Saver()
