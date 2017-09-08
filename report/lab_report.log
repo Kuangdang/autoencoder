@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.24)  30 AUG 2017 01:46
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.24)  5 SEP 2017 23:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -513,14 +513,26 @@ Package pdftex.def Info: pictures/compare_units.png used on input line 252.
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [7 <./pictures/composite.png>]
-<pictures/compare_fc_conv.png, id=40, 991.705pt x 306.14375pt>
+<pictures/compare-units-loss.png, id=40, 836.12375pt x 388.45125pt>
+File: pictures/compare-units-loss.png Graphic file (type png)
+
+<use pictures/compare-units-loss.png>
+Package pdftex.def Info: pictures/compare-units-loss.png used on input line 259
+.
+(pdftex.def)             Requested size: 426.8pt x 198.29124pt.
+
+<pictures/compare_fc_conv.png, id=41, 991.705pt x 306.14375pt>
 File: pictures/compare_fc_conv.png Graphic file (type png)
 
 <use pictures/compare_fc_conv.png>
-Package pdftex.def Info: pictures/compare_fc_conv.png used on input line 260.
+Package pdftex.def Info: pictures/compare_fc_conv.png used on input line 267.
 (pdftex.def)             Requested size: 426.8pt x 131.75603pt.
- (./lab_report.bbl) [8 <./pictures/compare_units.png> <./pictures/compare_fc_co
-nv.png>] (./lab_report.aux (./titlepage.aux))
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [8 <./pictures/compare_units.png> <./pictures/compare-units-loss.png>] (./lab_
+report.bbl) [9 <./pictures/compare_fc_conv.png>] (./lab_report.aux (./titlepage
+.aux))
 
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
@@ -529,10 +541,10 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 4905 strings out of 494953
- 69590 string characters out of 6180977
- 131700 words of memory out of 5000000
- 8034 multiletter control sequences out of 15000+600000
+ 4911 strings out of 494953
+ 69771 string characters out of 6180977
+ 131708 words of memory out of 5000000
+ 8039 multiletter control sequences out of 15000+600000
  60703 words of font info for 81 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  44i,8n,43p,269b,313s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -545,10 +557,10 @@ lvetic/uhvr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/symbol/usyr.pf
 b></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/t
 exlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-di
 st/fonts/type1/urw/times/utmri8a.pfb>
-Output written on lab_report.pdf (8 pages, 651606 bytes).
+Output written on lab_report.pdf (9 pages, 706633 bytes).
 PDF statistics:
- 75 PDF objects out of 1000 (max. 8388607)
- 48 compressed objects within 1 object stream
+ 79 PDF objects out of 1000 (max. 8388607)
+ 50 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 36 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 41 words of extra memory for PDF output out of 10000 (max. 10000000)
 
