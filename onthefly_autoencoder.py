@@ -78,10 +78,10 @@ class Autoencoder:
         self.loss_sum = tf.summary.scalar('loss', self.loss)
 
 if __name__ == '__main__':
-    PATH = "/home/stud/wangc/lab/record/"
+    PATH = "/home/wangc/lab/record/"
     f = open(PATH + "log", "w+")
     DATASET = "../mnist.h5"
-    save_path = "/home/stud/wangc/lab/record/model.ckpt"
+    save_path = "/home/wangc/lab/record/model.ckpt"
     maxtime = 20
     desired = 64 * 64
     hidden_num = 2500
@@ -98,8 +98,8 @@ if __name__ == '__main__':
     rmsOpti = tf.train.RMSPropOptimizer(0.001)
     ae = Autoencoder(inputs, hidden_num, optimizer=rmsOpti,
                      conditioned=False)
-    print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, learning rate %f, condtioned %s"
-            % (hidden_num, batch_size, epoch,
+    print("class %s, hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, learning rate %f, condtioned %s"
+            % (type(ae).__name__, hidden_num, batch_size, epoch,
                ae.optimizer, ae.enc_cell, 0.001, ae.conditioned), file=f)
     f.flush()
     saver = tf.train.Saver()
