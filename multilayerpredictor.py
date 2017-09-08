@@ -4,7 +4,8 @@ import tensorflow as tf
 from new_handler import DataHandler
 #autoencoder class
 class MultilayerPredictor:
-    def __init__(self, inputs, predict_frames, hidden_num, targets=None, enc_cell=None, dec_cell=None, optimizer=None, conditioned=None):
+    def __init__(self, inputs, predict_frames, hidden_num, layers_num=2, targets=None,
+                 enc_cell=None, dec_cell=None, optimizer=None, conditioned=None):
         '''
         inputs shape [input_frames, batch_size, frame_size*frame_size]
         '''
@@ -19,9 +20,9 @@ class MultilayerPredictor:
                                            use_peepholes=True, num_proj=desired)
         if enc_cell is None:
             self.enc_cell = tf.contrib.rnn.MultiRNNCell(
-                                [_lstm_cell() for _ in range(number_of_layers)])
+                                [_lstm_cell() for _ in range(layers_num)])
             self.dec_cell = tf.contrib.rnn.MultiRNNCell(
-                                [_lstm_cell() for _ in range(number_of_layers)])
+                                [_lstm_cell() for _ in range(layers_num)])
         if enc_cell is None:
             self.enc_cell = tf.contrib.rnn.LSTMCell(self.hidden_num,
                                                     use_peepholes=True, num_proj=desired)
@@ -105,9 +106,9 @@ if __name__ == '__main__':
     targets = tf.placeholder(tf.float32, shape=[predict_frames, batch_size, desired], name='targets')
 
     rmsOpti = tf.train.RMSPropOptimizer(0.001)
-    ae = MultilayerPredictor(inputs, predict_frames, hidden_num, optimizer=rmsOpti, conditioned=False, targets=targets) 
+    ae = MultilayerPredictor(inputs, predict_frames, hidden_num, layers_num=2, optimizer=rmsOpti, conditioned=False, targets=targets) 
     print("class %s, hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, learning rate %f, condtioned %s"
-            % (ae.__name__, hidden_num, batch_size, epoch,
+            % (type(ae).__name__, hidden_num, batch_size, epoch,
                ae.optimizer, ae.enc_cell, 0.001, ae.conditioned), file=f)
     f.flush()
     saver = tf.train.Saver()
