@@ -5,8 +5,8 @@ from custom_cell import ConvLSTMCell
 from new_handler import DataHandler
 
 #autoencoder class
-class ConvAutoencoder:
-    def __init__(self, inputs, enc_cell, dec_cell, optimizer=None, conditioned=None):
+class ConvPredictor:
+    def __init__(self, inputs, predict_frames_num, enc_cell, dec_cell, targets=None, optimizer=None, conditioned=None):
         '''
         inputs shape [maxtime, batch_size, height, weight, channels]
         '''
@@ -56,8 +56,7 @@ class ConvAutoencoder:
                                       saved_state.assign(state)]):
             self.outputs = tf.stack(outputs)
             #reverse the outputs to make the training easier
-            reversed_outputs = outputs[::-1]
-            self.loss = tf.reduce_mean(tf.squared_difference(reversed_outputs, inputs))
+            self.loss = tf.reduce_mean(tf.squared_difference(self.outputs, targets))
 
         #optimizer
         if optimizer is None:
@@ -78,11 +77,13 @@ if __name__ == '__main__':
     DATASET = "../mnist.h5"
     save_path = "/home/wangc/lab/record/model.ckpt"
     f = open(PATH + "log", "w+") 
-    maxtime = 20
+    input_frames = 10
+    predict_frames = 10
+    total_frames = input_frames + predict_frames
     in_h = 64
     in_w = 64
     batch_size = 30
-    data_generator = DataHandler(DATASET, num_frames=maxtime, batch_size=batch_size)
+    data_generator = DataHandler(DATASET, num_frames=total_frames, batch_size=batch_size)
 
     epoch = 200
     steps = 300
@@ -92,11 +93,13 @@ if __name__ == '__main__':
     enc_cell = ConvLSTMCell(30, (in_h, in_w), [8,8], 1)
     dec_cell = ConvLSTMCell(30, (in_h, in_w), [8,8], 1)
 
-    inputs = tf.placeholder(tf.float32, shape = [maxtime, batch_size, in_h, in_w, 1], name='inputs')
+    inputs = tf.placeholder(tf.float32, shape = [input_frames, batch_size, in_h, in_w, 1], name='inputs')
+    targets = tf.placeholder(tf.float32, shape = [predict_frames, batch_size, in_h, in_w, 1], name='targets')
 
     rmsOpti = tf.train.RMSPropOptimizer(0.001)
-    ae = ConvAutoencoder(inputs, enc_cell=enc_cell, dec_cell=dec_cell, optimizer=rmsOpti, conditioned=False) 
-    print("class %s, hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, conditioned %s" 
+    ae = ConvPredictor(inputs, predict_frames=10, enc_cell=enc_cell, dec_cell=dec_cell, targets=targets,
+                       optimizer=rmsOpti, conditioned=False) 
+    print("class %s, features %d, batch_size %d, epoch %d, optimizer %s, cell %s, conditioned %s" 
             % (type(ae).__name__, ae.enc_cell._num_units, batch_size, epoch, ae.optimizer, ae.enc_cell, ae.conditioned), file=f)
     f.flush()
     saver = tf.train.Saver()
@@ -109,14 +112,16 @@ if __name__ == '__main__':
                 PATH + 'logdir'+'/validate', sess.graph) 
         for j in range(epoch):
             for i in range(steps):
+                data = data_generator.get_batch().reshape(maxtime, batch_size, in_h, in_w, 1)
                 _, train_sum = sess.run([ae.train, ae.loss_sum],
-                                        feed_dict={inputs:data_generator.get_batch().reshape(maxtime, batch_size, in_h, in_w, 1)})
-            train_writer.add_summary(train_sum, j)
+                                        feed_dict={inputs:data[:10], targets:data[10:]}
+                train_writer.add_summary(train_sum, j)
 
             val_loss_sum = 0
             for p in range(val_steps): 
+                data = data_generator.get_batch().reshape(maxtime, batch_size, in_h, in_w, 1)
                 val_sum, val_loss = sess.run([ae.loss_sum, ae.loss],
-                                        feed_dict={inputs:data_generator.get_batch().reshape(maxtime, batch_size, in_h, in_w, 1)})
+                                             feed_dict={inputs:data[:10], targets:data[10:]}
                 val_loss_sum += val_loss
             val_avrg = val_loss_sum/val_steps
             val_summa = tf.Summary(value=[tf.Summary.Value(tag="loss", simple_value=val_avrg),])
