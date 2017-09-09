@@ -1,4 +1,4 @@
-#block(name=block-1, threads=10, memory=10240, subtasks=1, gpus=1, hours=24)
+#block(name=block-1, threads=10, memory=10240, subtasks=1, gpus=1, hours=48)
 FIRST=0
 IFS=',| '
 while read index used mem
