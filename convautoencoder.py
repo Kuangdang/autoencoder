@@ -2,10 +2,10 @@ import sys
 import numpy as np
 import tensorflow as tf
 from custom_cell import ConvLSTMCell
-from tools import normalizedata
+from new_handler import DataHandler
 
 #autoencoder class
-class Autoencoder:
+class ConvAutoencoder:
     def __init__(self, inputs, enc_cell, dec_cell, optimizer=None, conditioned=None):
         '''
         inputs shape [maxtime, batch_size, height, weight, channels]
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     data_generator = DataHandler(DATASET, num_frames=maxtime, batch_size=batch_size)
 
     epoch = 200
-    steps = 500
+    steps = 300
     val_steps = 50
     test_steps = 50
 
@@ -94,9 +94,8 @@ if __name__ == '__main__':
 
     inputs = tf.placeholder(tf.float32, shape = [maxtime, batch_size, in_h, in_w, 1], name='inputs')
 
-    rmsOpti = tf.train.RMSPropOptimizer(0.0001)
-    ae = Autoencoder(inputs, enc_cell=enc_cell, dec_cell=dec_cell, optimizer=rmsOpti, conditioned=False) 
-    #ae = Autoencoder(inputs, enc_cell=enc_cell, dec_cell=dec_cell)
+    rmsOpti = tf.train.RMSPropOptimizer(0.001)
+    ae = ConvAutoencoder(inputs, enc_cell=enc_cell, dec_cell=dec_cell, optimizer=rmsOpti, conditioned=False) 
     print("class %s, hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, conditioned %s" 
             % (type(ae).__name__, ae.enc_cell._num_units, batch_size, epoch, ae.optimizer, ae.enc_cell, ae.conditioned), file=f)
     f.flush()
