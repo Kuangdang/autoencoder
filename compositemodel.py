@@ -69,6 +69,7 @@ class CompositeModel:
             v = None
             for _ in range(input_frames):
                 with tf.variable_scope('unrolling', reuse=v):
+                    '''
                     if conditioned is None:
                         reconstruct_output, dec_reconstruct_state = self.dec_reconstruct_cell(dec_reconstruct_inputs,
                                                                                               dec_reconstruct_state)
@@ -79,6 +80,9 @@ class CompositeModel:
                         else:
                             reconstruct_output, dec_reconstruct_state = self.dec_reconstruct_cell(reconstruct_output,
                                                                                                   dec_reconstruct_state)
+                    '''
+                    reconstruct_output, dec_reconstruct_state = self.dec_reconstruct_cell(dec_reconstruct_inputs,
+                                                                                              dec_reconstruct_state)
 
                     v = True
                     reconstruct_outputs.append(reconstruct_output)
