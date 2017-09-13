@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.24)  5 SEP 2017 23:06
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.24)  11 SEP 2017 03:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -475,49 +475,52 @@ File: pictures/convlstm.png Graphic file (type png)
 Package pdftex.def Info: pictures/convlstm.png used on input line 164.
 (pdftex.def)             Requested size: 426.8pt x 117.30685pt.
 
-
-LaTeX Warning: Reference `fig:encoder' on page 4 undefined on input line 171.
-
-
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [4 <./pictures/vanilla.png>]
+
+LaTeX Warning: Reference `fig:encoder' on page 5 undefined on input line 194.
+
 <pictures/autoencoder.png, id=26, 603.25375pt x 332.24126pt>
 File: pictures/autoencoder.png Graphic file (type png)
 
 <use pictures/autoencoder.png>
-Package pdftex.def Info: pictures/autoencoder.png used on input line 183.
+Package pdftex.def Info: pictures/autoencoder.png used on input line 206.
 (pdftex.def)             Requested size: 341.4413pt x 188.04617pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 <pictures/predictor.png, id=27, 630.355pt x 325.215pt>
 File: pictures/predictor.png Graphic file (type png)
 
 <use pictures/predictor.png>
-Package pdftex.def Info: pictures/predictor.png used on input line 194.
+Package pdftex.def Info: pictures/predictor.png used on input line 217.
 (pdftex.def)             Requested size: 341.4413pt x 176.15933pt.
- [5 <./pictures/convlstm.png> <./pictures/autoencoder.png>] <pictures/composite
-.png, id=31, 648.4225pt x 613.29124pt>
+
+Underfull \vbox (badness 1436) has occurred while \output is active []
+
+ [5 <./pictures/convlstm.png>] <pictures/composite.png, id=31, 648.4225pt x 613
+.29124pt>
 File: pictures/composite.png Graphic file (type png)
 
 <use pictures/composite.png>
-Package pdftex.def Info: pictures/composite.png used on input line 209.
+Package pdftex.def Info: pictures/composite.png used on input line 232.
 (pdftex.def)             Requested size: 341.4413pt x 322.9466pt.
- [6 <./pictures/predictor.png>]
-<pictures/compare_units.png, id=35, 985.6825pt x 410.53375pt>
+ [6 <./pictures/autoencoder.png> <./pictures/predictor.png>] [7 <./pictures/com
+posite.png>]
+<pictures/compare_units.png, id=39, 985.6825pt x 410.53375pt>
 File: pictures/compare_units.png Graphic file (type png)
 
 <use pictures/compare_units.png>
-Package pdftex.def Info: pictures/compare_units.png used on input line 252.
+Package pdftex.def Info: pictures/compare_units.png used on input line 275.
 (pdftex.def)             Requested size: 426.8pt x 177.76012pt.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [7 <./pictures/composite.png>]
 <pictures/compare-units-loss.png, id=40, 836.12375pt x 388.45125pt>
 File: pictures/compare-units-loss.png Graphic file (type png)
 
 <use pictures/compare-units-loss.png>
-Package pdftex.def Info: pictures/compare-units-loss.png used on input line 259
+Package pdftex.def Info: pictures/compare-units-loss.png used on input line 282
 .
 (pdftex.def)             Requested size: 426.8pt x 198.29124pt.
 
@@ -525,26 +528,23 @@ Package pdftex.def Info: pictures/compare-units-loss.png used on input line 259
 File: pictures/compare_fc_conv.png Graphic file (type png)
 
 <use pictures/compare_fc_conv.png>
-Package pdftex.def Info: pictures/compare_fc_conv.png used on input line 267.
+Package pdftex.def Info: pictures/compare_fc_conv.png used on input line 290.
 (pdftex.def)             Requested size: 426.8pt x 131.75603pt.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 2351) has occurred while \output is active []
 
  [8 <./pictures/compare_units.png> <./pictures/compare-units-loss.png>] (./lab_
-report.bbl) [9 <./pictures/compare_fc_conv.png>] (./lab_report.aux (./titlepage
-.aux))
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
+report.bbl
+[9 <./pictures/compare_fc_conv.png>]) [10] (./lab_report.aux (./titlepage.aux))
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 4911 strings out of 494953
- 69771 string characters out of 6180977
- 131708 words of memory out of 5000000
- 8039 multiletter control sequences out of 15000+600000
+ 4913 strings out of 494953
+ 69796 string characters out of 6180977
+ 131730 words of memory out of 5000000
+ 8041 multiletter control sequences out of 15000+600000
  60703 words of font info for 81 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  44i,8n,43p,269b,313s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -557,10 +557,10 @@ lvetic/uhvr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/symbol/usyr.pf
 b></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/t
 exlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-di
 st/fonts/type1/urw/times/utmri8a.pfb>
-Output written on lab_report.pdf (9 pages, 706633 bytes).
+Output written on lab_report.pdf (10 pages, 710045 bytes).
 PDF statistics:
- 79 PDF objects out of 1000 (max. 8388607)
- 50 compressed objects within 1 object stream
+ 82 PDF objects out of 1000 (max. 8388607)
+ 52 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  41 words of extra memory for PDF output out of 10000 (max. 10000000)
 

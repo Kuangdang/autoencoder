@@ -167,6 +167,29 @@ equations are given below, where $\ast$ denotes the convolutional operator and $
     \label{fig:convlstm}
 \end{figure}
 
+\subsection{Multi-layer LSTM}
+The recurrent neural network (RNN) is considered as a deep neural network (DNN) when it's unfolded in time. But it's different with common
+deep networks in the term of funtionality, as pointed out by Hermans \emph{et al.} in \cite{deeprnn}.
+DNNs contribute to the success of many tasks by introducing the hierarchy processing of the
+information due to the several layers. But the primary funtion of the layers in RNNs is to introduce memory, not hierarchy processing. New
+information is added in every "layer" (every network iteration), and the network can pass information in memory on for indefinite number 
+of network updates. So the layers of RNNs ensure that the older data can pass though the recursion more often, which is not hierarchy 
+processing of information.
+
+In order to make RNNs capable of hierarchy processing, one RNN is stacked on another. More specifically here, one LSTM layer is stacked on
+another. So there are feedforward connections between units in an LSTM layer and the LSTM layer above it. The hidden state of the i-th
+layer is denoted with $a_i(t)$. Its update equation is given by:
+
+\begin{align*}
+    a_i(t) &= tanh(\mathbf{W}_{i}a_i(t-1) + \mathbf{Z}_{i}a_{i-1}(t)) \ if \ i > 1 \\
+    a_i(t) &= tanh(\mathbf{W}_{i}a_i(t-1) + \mathbf{Z}_{i}s(t)) \ if \ i = 1 \\
+\end{align*}
+
+Here $\mathbf{W}_i$ and $\mathbf{Z}_i$ are the recurrent connections and the connections from the lower layer or input frames, $s(t)$
+represents input frames.
+
+
+
 \subsection{LSTM autoencoder model}
 Autoencoder model is composed of two Recurrent Neural Network, the encoder LSTM and the decoder LSTM, as shown in figure \ref{fig:encoder}.
 The input to the model is a sequence of vectors, in our case, video frames. The encoder LSTM runs through these frames to come up with a
@@ -268,6 +291,33 @@ Here we compare the perfermance between autoencoder using fully-connected lstm c
     \caption{reconstruction of fc and conv lstm autoencoder}
     \label{fig:fc-conv}
 \end{figure}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ c c } 
+    \hline
+    Model & MSE \\
+    \hline
+    Future Predictor & 0.02008 \\
+    Composite Model & 0.00172 \\
+    Conditional Future predictor & xxx \\
+    Composite Model with 
+    Conditional Future Predictor & xxx \\
+    \hline
+    \end{tabular}
+    \caption{Future prediction results on MNIST}
+\label{table:variants}
+\end{table}
+
+\subsection{Comparison of Different Model Variants}
+We have introduced several different variants of model, it's natural to show how they perform compared with each other. The input
+reconstruction error cannot be used, because it can be lower by copying the inputs. But the error in predicting future frames can be a
+measure of how good the model is. The results of future predictor are summarized in table \ref{table:variants}. 
+The results in the table are mean square error computed on MNIST dataset of the predictions with respect to the ground truth, both of
+which are $64\times64$ patches. From the table, we see the Composite Model performs better in predicting the future compared to the Future
+Predictor. So the autoencoder combined with the future predictor in the composite model helps predict the future better by foring the model
+to remember more about the inputs. 
+
 
 
 % =========================================================================

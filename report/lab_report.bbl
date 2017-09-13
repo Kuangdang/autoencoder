@@ -7,6 +7,13 @@ Klaus Greff, Rupesh~Kumar Srivastava, Jan Koutn{\'{\i}}k, Bas~R. Steunebrink,
 \newblock {LSTM:} {A} search space odyssey.
 \newblock {\em CoRR}, abs/1503.04069, 2015.
 
+\bibitem[HS13]{deeprnn}
+Michiel Hermans and Benjamin Schrauwen.
+\newblock Training and analysing deep recurrent neural networks.
+\newblock In C.J.C. Burges, L.~Bottou, M.~Welling, Z.~Ghahramani, and K.Q.
+  Weinberger, editors, {\em Advances in Neural Information Processing Systems
+  26}, pages 190--198. 2013.
+
 \bibitem[SCW{\etalchar{+}}15]{convlstm}
 Xingjian Shi, Zhourong Chen, Hao Wang, Dit{-}Yan Yeung, Wai{-}Kin Wong, and
   Wang{-}chun Woo.
