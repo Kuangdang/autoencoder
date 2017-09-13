@@ -88,7 +88,7 @@ if __name__ == '__main__':
     batch_size = 30
     data_generator = DataHandler(DATASET, num_frames=total_frames, batch_size=batch_size)
 
-    epoch = 300
+    epoch = 500
     steps = 500
     val_steps = 50
     test_steps = 50
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     rmsOpti = tf.train.RMSPropOptimizer(0.001)
     ae = Predictor(inputs, predict_frames, hidden_num, optimizer=rmsOpti, conditioned=False, targets=targets) 
     print("class %s, hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, learning rate %f, condtioned %s"
-            % (ae.__name__, hidden_num, batch_size, epoch,
+            % (type(ae).__name__, hidden_num, batch_size, epoch,
                ae.optimizer, ae.enc_cell, 0.001, ae.conditioned), file=f)
     f.flush()
     saver = tf.train.Saver()

@@ -8,7 +8,7 @@ from custom_cell import ConvLSTMCell
 
 DATAPATH = "../../testdata.npz"
 MODELPATH = "../../record/model.ckpt"
-LOGPATH = "../../record/log"
+LOGPATH = "../../record/log.txt"
 OUTPUTPATH = "../../record/outputs"
 f = open(LOGPATH, "w+")
 data = np.load(DATAPATH)['test_in']
@@ -19,7 +19,7 @@ in_w = data.shape[3]
 enc_cell = ConvLSTMCell(30, (in_h, in_w), [8,8], 1)
 dec_cell = ConvLSTMCell(30, (in_h, in_w), [8,8], 1)
 inputs = tf.placeholder(tf.float32,
-                        shape = [maxtime, batch_size,
+                        shape=[maxtime, batch_size,
                                  in_h, in_w, 1], name='inputs')
 rmsOpti = tf.train.RMSPropOptimizer(0.001)
 ae = ConvAutoencoder(inputs, enc_cell=enc_cell,
@@ -27,6 +27,7 @@ ae = ConvAutoencoder(inputs, enc_cell=enc_cell,
                      conditioned=False) 
 
 data = data.reshape(maxtime, batch_size, in_h, in_w, 1)
+print(data[0,0])
 test_steps = 50
 saver = tf.train.Saver()
 with tf.Session() as sess:
@@ -35,6 +36,7 @@ with tf.Session() as sess:
     for _ in range(test_steps):
         test_outputs, test_l = sess.run([ae.outputs, ae.loss], 
                                         feed_dict={inputs:data})
+        print(test_l)
         test_sum += test_l 
     average_test = test_sum/test_steps
     f.write("test error %f" % average_test)

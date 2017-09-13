@@ -1,0 +1,17 @@
+---------------- start ----------------
+Tue Sep 12 2017 16:05:07
+max threads: 10
+max memory: 10240 MB
+time limit: 48 hours
+gpu id(s): 2
+---------------------------------------
+passed parameters: testcomposite.py
+2
+]0;IPython: autoencoder/testscriptsTraceback (most recent call last):
+  File "testcomposite.py", line 15, in <module>
+    data = data.reshape(maxtime, batch_size, -1)
+NameError: name 'maxtime' is not defined
+----------------- end -----------------
+Tue Sep 12 2017 16:05:11
+elapsed time: 000:00:04
+---------------------------------------

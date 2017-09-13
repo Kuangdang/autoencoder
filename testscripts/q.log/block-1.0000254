@@ -1,0 +1,17 @@
+---------------- start ----------------
+Tue Sep 12 2017 16:04:26
+max threads: 10
+max memory: 10240 MB
+time limit: 48 hours
+gpu id(s): 3
+---------------------------------------
+passed parameters: testcomposite.py
+2
+]0;IPython: autoencoder/testscriptsTraceback (most recent call last):
+  File "testcomposite.py", line 13, in <module>
+    f = open(LOGPATH, "a")
+FileNotFoundError: [Errno 2] No such file or directory: '../../record/log.txt'
+----------------- end -----------------
+Tue Sep 12 2017 16:04:30
+elapsed time: 000:00:04
+---------------------------------------

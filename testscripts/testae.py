@@ -7,10 +7,10 @@ from onthefly_autoencoder import Autoencoder
 
 DATAPATH = "../../testdata.npz"
 MODELPATH = "../../record/model.ckpt"
-LOGPATH = "../../record/log"
+LOGPATH = "../../record/log.txt"
 OUTPUTPATH = "../../record/outputs"
 
-f = open(LOGPATH, "w+")
+f = open(LOGPATH, "a")
 data = np.load(DATAPATH)['test_in']
 data = data.reshape(maxtime, batch_size, -1)
 maxtime = data.shape[0]
@@ -20,7 +20,7 @@ hidden_num = 1500
 
 inputs = tf.placeholder(tf.float32,
                         shape = [maxtime, batch_size,
-                        desired, name='inputs')
+                        desired], name='inputs')
 rmsOpti = tf.train.RMSPropOptimizer(0.001)
 
 ae = Autoencoder(inputs, optimizer=rmsOpti, conditioned=False) 

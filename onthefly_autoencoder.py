@@ -84,13 +84,13 @@ if __name__ == '__main__':
     save_path = "/home/wangc/lab/record/model.ckpt"
     maxtime = 20
     desired = 64 * 64
-    hidden_num = 2500
+    hidden_num = 500
     batch_size = 30
     data_generator = DataHandler(DATASET, num_frames=maxtime, batch_size=batch_size)
 
-    epoch = 200
+    epoch = 300
     steps = 200
-    val_steps = 20
+    val_steps = 50
     test_steps = 20
 
     inputs = tf.placeholder(tf.float32, shape=[maxtime, batch_size, desired], name='inputs')
