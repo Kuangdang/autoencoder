@@ -84,8 +84,8 @@ if __name__ == '__main__':
     batch_size = 30
     data_generator = DataHandler(DATASET, num_frames=maxtime, batch_size=batch_size)
 
-    epoch = 200
-    steps = 300
+    epoch = 300
+    steps = 500
     val_steps = 50
     test_steps = 50
 

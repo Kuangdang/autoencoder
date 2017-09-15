@@ -13,7 +13,7 @@ def denormdata(data):
     norm = 255 * (data - min_e)/(max_e - min_e)
     return norm
 
-def generatedata(dataset, num_frames, save_path, num_digits=2, batch_size=50):
+def generatedata(dataset, num_frames, save_path, num_digits=2, batch_size=30):
     handler = DataHandler(mnist_dataset=dataset, num_frames=num_frames,
                           num_digits=num_digits, batch_size=batch_size)
     data = handler.get_batch()

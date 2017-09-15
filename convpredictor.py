@@ -6,7 +6,7 @@ from new_handler import DataHandler
 
 #autoencoder class
 class ConvPredictor:
-    def __init__(self, inputs, predict_frames_num, enc_cell, dec_cell, targets=None, optimizer=None, conditioned=None):
+    def __init__(self, inputs, predict_frames, enc_cell, dec_cell, targets=None, optimizer=None, conditioned=None):
         '''
         inputs shape [maxtime, batch_size, height, weight, channels]
         '''
@@ -85,8 +85,8 @@ if __name__ == '__main__':
     batch_size = 30
     data_generator = DataHandler(DATASET, num_frames=total_frames, batch_size=batch_size)
 
-    epoch = 200
-    steps = 300
+    epoch = 300
+    steps = 500
     val_steps = 50
     test_steps = 50
 
@@ -96,7 +96,7 @@ if __name__ == '__main__':
     inputs = tf.placeholder(tf.float32, shape = [input_frames, batch_size, in_h, in_w, 1], name='inputs')
     targets = tf.placeholder(tf.float32, shape = [predict_frames, batch_size, in_h, in_w, 1], name='targets')
 
-    rmsOpti = tf.train.RMSPropOptimizer(0.001)
+    rmsOpti = tf.train.RMSPropOptimizer(0.0001)
     ae = ConvPredictor(inputs, predict_frames=10, enc_cell=enc_cell, dec_cell=dec_cell, targets=targets,
                        optimizer=rmsOpti, conditioned=False) 
     print("class %s, features %d, batch_size %d, epoch %d, optimizer %s, cell %s, conditioned %s" 
@@ -112,16 +112,16 @@ if __name__ == '__main__':
                 PATH + 'logdir'+'/validate', sess.graph) 
         for j in range(epoch):
             for i in range(steps):
-                data = data_generator.get_batch().reshape(maxtime, batch_size, in_h, in_w, 1)
+                data = data_generator.get_batch().reshape(total_frames, batch_size, in_h, in_w, 1)
                 _, train_sum = sess.run([ae.train, ae.loss_sum],
-                                        feed_dict={inputs:data[:10], targets:data[10:]}
+                                        feed_dict={inputs:data[:10], targets:data[10:]})
                 train_writer.add_summary(train_sum, j)
 
             val_loss_sum = 0
             for p in range(val_steps): 
-                data = data_generator.get_batch().reshape(maxtime, batch_size, in_h, in_w, 1)
+                data = data_generator.get_batch().reshape(total_frames, batch_size, in_h, in_w, 1)
                 val_sum, val_loss = sess.run([ae.loss_sum, ae.loss],
-                                             feed_dict={inputs:data[:10], targets:data[10:]}
+                                             feed_dict={inputs:data[:10], targets:data[10:]})
                 val_loss_sum += val_loss
             val_avrg = val_loss_sum/val_steps
             val_summa = tf.Summary(value=[tf.Summary.Value(tag="loss", simple_value=val_avrg),])
