@@ -4,7 +4,8 @@ import tensorflow as tf
 from new_handler import DataHandler
 #autoencoder class
 class Predictor:
-    def __init__(self, inputs, predict_frames, hidden_num, targets=None, enc_cell=None, dec_cell=None, optimizer=None, conditioned=None):
+    def __init__(self, inputs, predict_frames_num, hidden_num,
+                 targets=None, enc_cell=None, dec_cell=None, optimizer=None, conditioned=None):
         '''
         inputs shape [input_frames, batch_size, frame_size*frame_size]
         '''
@@ -99,7 +100,7 @@ if __name__ == '__main__':
     rmsOpti = tf.train.RMSPropOptimizer(0.001)
     ae = Predictor(inputs, predict_frames, hidden_num, optimizer=rmsOpti, conditioned=False, targets=targets) 
     print("class %s, hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, learning rate %f, condtioned %s"
-            % (ae.__name__, hidden_num, batch_size, epoch,
+            % (type(ae).__name__, hidden_num, batch_size, epoch,
                ae.optimizer, ae.enc_cell, 0.001, ae.conditioned), file=f)
     f.flush()
     saver = tf.train.Saver()
