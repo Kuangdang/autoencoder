@@ -33,7 +33,7 @@ ae = CompositeModel(inputs, predict_frames, hidden_num,
                optimizer=rmsOpti, conditioned=False,
                targets=targets) 
 
-test_steps = 50
+test_steps = 1
 saver = tf.train.Saver()
 with tf.Session() as sess:
     saver.restore(sess, MODELPATH)

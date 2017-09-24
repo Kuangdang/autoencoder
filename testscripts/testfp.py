@@ -7,7 +7,7 @@ from futurepredictor import Predictor
 
 DATAPATH = "../../testdata.npz"
 MODELPATH = "../../record/model.ckpt"
-LOGPATH = "../../record/log.txt"
+LOGPATH = "../../record/log"
 OUTPUTPATH = "../../record/outputs"
 
 f = open(LOGPATH, "a")

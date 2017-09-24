@@ -12,9 +12,9 @@ OUTPUTPATH = "../../record/outputs"
 
 f = open(LOGPATH, "a")
 data = np.load(DATAPATH)['test_in']
+maxtime = 20 
+batch_size = 30 
 data = data.reshape(maxtime, batch_size, -1)
-maxtime = data.shape[0]
-batch_size = data.shape[1]
 desired = data.shape[-1]
 hidden_num = 1500
 
@@ -23,9 +23,9 @@ inputs = tf.placeholder(tf.float32,
                         desired], name='inputs')
 rmsOpti = tf.train.RMSPropOptimizer(0.001)
 
-ae = Autoencoder(inputs, optimizer=rmsOpti, conditioned=False) 
+ae = Autoencoder(inputs, hidden_num, optimizer=rmsOpti, conditioned=False) 
 
-test_steps = 50
+test_steps = 1
 saver = tf.train.Saver()
 with tf.Session() as sess:
     saver.restore(sess, MODELPATH)

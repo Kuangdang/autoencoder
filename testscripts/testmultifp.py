@@ -29,7 +29,7 @@ targets = tf.placeholder(tf.float32,
                         name='targets')
 rmsOpti = tf.train.RMSPropOptimizer(0.0001)
 
-ae = Predictor(inputs, predict_frames, hidden_num, layers_num=2
+ae = MultilayerPredictor(inputs, predict_frames, hidden_num, layers_num=2,
                optimizer=rmsOpti, conditioned=False,
                targets=targets) 
 
