@@ -85,18 +85,19 @@ if __name__ == '__main__':
     batch_size = 30
     data_generator = DataHandler(DATASET, num_frames=total_frames, batch_size=batch_size)
 
-    epoch = 300
+    epoch = 100
     steps = 500
     val_steps = 50
     test_steps = 50
 
-    enc_cell = ConvLSTMCell(30, (in_h, in_w), [8,8], 1)
-    dec_cell = ConvLSTMCell(30, (in_h, in_w), [8,8], 1)
+    enc_cell = ConvLSTMCell(100, (in_h, in_w), [8,8], 1)
+    dec_cell = ConvLSTMCell(100, (in_h, in_w), [8,8], 1)
 
     inputs = tf.placeholder(tf.float32, shape = [input_frames, batch_size, in_h, in_w, 1], name='inputs')
     targets = tf.placeholder(tf.float32, shape = [predict_frames, batch_size, in_h, in_w, 1], name='targets')
 
-    rmsOpti = tf.train.RMSPropOptimizer(0.0001)
+    start_learning_rate  = 0.0001
+    rmsOpti = tf.train.RMSPropOptimizer(start_learning_rate)
     ae = ConvPredictor(inputs, predict_frames=10, enc_cell=enc_cell, dec_cell=dec_cell, targets=targets,
                        optimizer=rmsOpti, conditioned=False) 
     print("class %s, features %d, batch_size %d, epoch %d, optimizer %s, cell %s, conditioned %s" 
@@ -115,7 +116,7 @@ if __name__ == '__main__':
                 data = data_generator.get_batch().reshape(total_frames, batch_size, in_h, in_w, 1)
                 _, train_sum = sess.run([ae.train, ae.loss_sum],
                                         feed_dict={inputs:data[:10], targets:data[10:]})
-                train_writer.add_summary(train_sum, j)
+            train_writer.add_summary(train_sum, j)
 
             val_loss_sum = 0
             for p in range(val_steps): 

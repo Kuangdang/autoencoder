@@ -82,16 +82,16 @@ if __name__ == '__main__':
     f = open(PATH + "log", "w+")
     DATASET = "../mnist.h5"
     save_path = "/home/wangc/lab/record/model.ckpt"
-    maxtime = 20
+    maxtime = 60
     desired = 64 * 64
-    hidden_num = 500
-    batch_size = 30
+    hidden_num = 1000
+    batch_size = 10
     data_generator = DataHandler(DATASET, num_frames=maxtime, batch_size=batch_size)
 
-    epoch = 300
-    steps = 200
+    epoch = 500
+    steps = 500
     val_steps = 50
-    test_steps = 20
+    test_steps = 50
 
     inputs = tf.placeholder(tf.float32, shape=[maxtime, batch_size, desired], name='inputs')
 

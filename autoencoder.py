@@ -5,7 +5,7 @@ from tools import normalizedata
 
 #autoencoder class
 class Autoencoder:
-    def __init__(self, inputs, hidden_num, enc_cell=None, dec_cell=None, optimizer=None, conditioned=None):
+    def __init__(self, inputs, hidden_num, enc_cell=None, dec_cell=None, optimizer=None, conditioned=None, train_phase=False):
         '''
         inputs shape [maxtime, batch_size, frame_size*frame_size]
         '''
@@ -23,10 +23,15 @@ class Autoencoder:
         else:
             self.enc_cell = enc_cell
             self.dec_cell = dec_cell
+        
+        noise = np.random.normal(0, 0.1, (maxtime, batch_size, desired))
+        noisedinputs = inputs + noise.reshape(maxtime, batch_size, desired)
+        
 
         with tf.variable_scope('encode', reuse=None):
+            encoder_inputs = tf.cond(train_phase, lambda: noisedinputs, lambda: inputs)
             _, enc_state = tf.nn.dynamic_rnn(self.enc_cell,
-                                             inputs, dtype=tf.float32, time_major=True)
+                                             encoder_inputs, dtype=tf.float32, time_major=True)
 
         #assum projection is performed in cell
         saved_output = tf.Variable(tf.zeros([batch_size, desired]), trainable=False)
@@ -87,7 +92,7 @@ if __name__ == '__main__':
     data = data.reshape(data.shape[0], data.shape[1], -1)
     maxtime = data.shape[0]
     desired = data.shape[2]
-    hidden_num = 2500
+    hidden_num = 1500
     batch_size = 50
     train_size = 9000
     val_size = 500
@@ -99,10 +104,12 @@ if __name__ == '__main__':
     val_start = train_size
     test_start = val_start + val_size
 
+
     inputs = tf.placeholder(tf.float32, shape=[maxtime, batch_size, desired], name='inputs')
+    train_phase = tf.placeholder(tf.bool)
 
     rmsOpti = tf.train.RMSPropOptimizer(0.001)
-    ae = Autoencoder(inputs, hidden_num, optimizer=rmsOpti, conditioned=False)
+    ae = Autoencoder(inputs, hidden_num, optimizer=rmsOpti, conditioned=False, train_phase=train_phase)
     #ae = Autoencoder(inputs, hidden_num)
     print("hidden_num %d, batch_size %d, epoch %d, optimizer %s, cell %s, learning rate %f, condtioned %s"
             % (hidden_num, batch_size, epoch,
@@ -119,14 +126,15 @@ if __name__ == '__main__':
         for j in range(epoch):
             for i in range(steps):
                 _, train_sum = sess.run([ae.train, ae.loss_sum],
-                                        feed_dict={inputs:(data[:, i*batch_size:(i+1)*batch_size])})
+                                        feed_dict={inputs:(data[:, i*batch_size:(i+1)*batch_size]), train_phase:True})
             train_writer.add_summary(train_sum, j)
             #gradient_writer.add_summary(gradient_sum, j)
 
             val_loss_sum = 0
             for p in range(val_steps):
                 _, val_sum, val_loss = sess.run([ae.outputs, ae.loss_sum, ae.loss],
-                                                feed_dict={inputs:(data[:, val_start+p*batch_size:val_start+(p+1)*batch_size])})
+                                                feed_dict={inputs:(data[:, val_start+p*batch_size:val_start+(p+1)*batch_size]), 
+                                                           train_phase:False})
                 val_loss_sum += val_loss
             val_avrg = val_loss_sum/val_steps
             val_summa = tf.Summary(value=[
@@ -136,7 +144,7 @@ if __name__ == '__main__':
         test_sum = 0
         for k in range(test_steps):
             test_outputs, test_l = sess.run([ae.outputs, ae.loss],
-                    feed_dict={inputs:data[:, test_start+k*batch_size:test_start+(k+1)*batch_size]})
+                    feed_dict={inputs:data[:, test_start+k*batch_size:test_start+(k+1)*batch_size], train_phase:True})
             test_sum += test_l
         average_test = test_sum/test_steps
         print("test error %f" % average_test, file=f)
